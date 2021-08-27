@@ -319,10 +319,15 @@ const select_where = (where, component, children, nest, pushWhere = true) => {
   }
 };
 
+const select_union = (where, component, children, nest, pushWhere = true) => {
+  children.push(generateSpanChild("UNION"));
+};
+
 const clauseHandlers = {
   select: {
     from: select_from,
     where: select_where,
+    union: select_union,
   },
 };
 
