@@ -17,6 +17,7 @@ const select = (queryObj, component, children, nest) => {
       from: handleFromClause,
       where: handleWhereClause,
       union: handleUnionClause,
+      join: handleJoinClause,
     },
   } = clauseHandlers;
 
@@ -38,6 +39,12 @@ const select = (queryObj, component, children, nest) => {
   const from = queryObj[CLAUSE_TYPE.FROM];
   if (from) {
     handleFromClause(from, queryObj, component, children, nest);
+    // Join Clause
+    if (from.length >= 2 && from[1][CLAUSE_TYPE.JOIN]) {
+      // If second item in `from` has join item
+      const joinObj = from[1];
+      handleJoinClause(joinObj, component, children, nest);
+    }
   }
 
   const where = queryObj[CLAUSE_TYPE.WHERE];
@@ -47,12 +54,9 @@ const select = (queryObj, component, children, nest) => {
 
   const union = queryObj[CLAUSE_TYPE.UNION];
   if (union) {
-    // If union arg exists, add in more span+input and link to queryObj._next
-    // TODO Do the same for intersect, join, natural join, etc, perhaps use 'some' to check
+    // If union arg exists, append span+input and link to queryObj._next
     const nextQuery = queryObj._next;
-    console.log(nextQuery);
     const nextCols = nextQuery.columns;
-    console.log(nextCols);
     handleUnionClause(union, component, children, nest);
     children.push(generateSpanChild("SELECT"));
     children.push(

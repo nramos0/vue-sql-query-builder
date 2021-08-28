@@ -7,8 +7,11 @@ import {
   generateInputChild,
   getASTValue,
   getASTTable,
+  setAST_Join,
+  setAST_On,
   assignAST,
   getOnFocusAndOnBlur,
+  getASTArr,
 } from "./util";
 import { constants } from "../config/constants";
 
@@ -319,8 +322,34 @@ const select_where = (where, component, children, nest, pushWhere = true) => {
   }
 };
 
-const select_union = (where, component, children, nest, pushWhere = true) => {
+const select_union = (where, component, children, nest) => {
   children.push(generateSpanChild("UNION"));
+};
+
+const select_join = (joinObj, component, children, nest) => {
+  // joinObj = from[1]
+  // TODO Maybe add some error checking
+  children.push(generateSpanChild(joinObj["join"]));
+  children.push(
+    generateInputChild({
+      onChange: (e) => {
+        setAST_Join(joinObj, e.target.value);
+        console.log(`clause value nest ${nest} updated`);
+      },
+    })
+  );
+  if (joinObj["on"]) {
+    const onObj = joinObj["on"];
+    children.push(generateSpanChild("ON"));
+    children.push(
+      generateInputChild({
+        onChange: (e) => {
+          setAST_On(onObj, e.target.value);
+          console.log(`clause value nest ${nest} updated`);
+        },
+      })
+    );
+  }
 };
 
 const clauseHandlers = {
@@ -328,6 +357,7 @@ const clauseHandlers = {
     from: select_from,
     where: select_where,
     union: select_union,
+    join: select_join,
   },
 };
 

@@ -112,11 +112,47 @@ const getASTTable = (value) => {
   return parser.astify(`SELECT * FROM ${value}`).from;
 };
 
-const assignAST = (obj, ast) => {
+const assignAST = (obj, ast, i = 0) => {
+  // Changed parameters, if type(obj)=type(ast)=Array then must pass in its index `i`
+  if (Array.isArray(obj)) {
+    // Join has two items in array 'from', both gets deleted when changing FROM clause, which caused error
+    // TODO: Might find a better way to do this
+    obj = obj[i];
+    ast = ast[i];
+  }
   for (const prop in obj) {
     delete obj[prop];
   }
   Object.assign(obj, ast);
+};
+
+// AST for join statement is slightly different
+
+const parseJoin = (join, on) => {
+  const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
+  // if null set to parse placeholder
+  join = join ? join : c_temp;
+  on = on ? on : c_temp;
+  console.log(`SELECT ${c_temp} FROM ${c_temp} JOIN ${join} ON ${on}`);
+  return parser.astify(`SELECT ${c_temp} FROM ${c_temp} JOIN ${join} ON ${on}`);
+};
+
+const setAST_Join = (joinObj, join) => {
+  // join is text inside inputbox
+  const ast_join = parseJoin(join, null).from[1];
+  // joinObj has items db, as, join (already set = inner/l/r join), on (no access), table
+  // replace everything except on (dont have access to on, therefore its only a placeholder)
+  joinObj.db = ast_join.db;
+  joinObj.as = ast_join.as;
+  joinObj.table = ast_join.table;
+};
+
+const setAST_On = (onObj, on) => {
+  // on is text inside inputbox
+  const ast_on = parseJoin(null, on).from[1].on;
+  // similar to setAST_Join, except only have `on`
+  // can replace everything inside on
+  assignAST(onObj, ast_on);
 };
 
 export {
@@ -127,6 +163,8 @@ export {
   getASTValue,
   getASTArr,
   getASTTable,
+  setAST_Join,
+  setAST_On,
   assignAST,
   getOnFocus,
   getOnBlur,

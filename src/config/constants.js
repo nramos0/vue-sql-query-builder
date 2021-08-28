@@ -29,6 +29,7 @@ const constants = {
     FROM: "from",
     WHERE: "where",
     UNION: "union",
+    JOIN: "join",
   },
 
   QUERY_TYPE: {
