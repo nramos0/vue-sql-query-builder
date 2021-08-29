@@ -12,26 +12,12 @@ import {
   selectWhere,
   selectJoin,
   selectUnion,
+  selectHaving,
 } from "../clauseHandlers";
 
 const { CLAUSE_TYPE } = constants;
 
-export const selectQuery = (queryObj, component, children, nest) => {
-  const cols = queryObj.columns;
-
-  invariant(cols !== undefined, "Columns don't exist on queryObj");
-  invariant(Array.isArray(cols), "Columns is not an array");
-
-  children.push(generateSpanChild("SELECT"));
-  children.push(
-    generateInputChild({
-      onChange: (e) => {
-        assignAST(cols, getASTArr(e.target.value));
-        console.log(`select columns, nest ${nest} updated`);
-      },
-    })
-  );
-
+const handleFrom = (queryObj, component, children, nest) => {
   const from = queryObj[CLAUSE_TYPE.FROM];
   if (from) {
     selectFrom(from, queryObj, component, children, nest);
@@ -42,12 +28,16 @@ export const selectQuery = (queryObj, component, children, nest) => {
       selectJoin(joinObj, component, children, nest);
     }
   }
+};
 
+const handleWhere = (queryObj, component, children, nest) => {
   const where = queryObj[CLAUSE_TYPE.WHERE];
   if (where) {
     selectWhere(where, component, children, nest);
   }
+};
 
+const handleUnion = (queryObj, component, children, nest) => {
   const union = queryObj[CLAUSE_TYPE.UNION];
   if (union) {
     // If union arg exists, append span+input and link to queryObj._next
@@ -72,4 +62,33 @@ export const selectQuery = (queryObj, component, children, nest) => {
       selectWhere(nextWhere, component, children, nest);
     }
   }
+};
+
+const handleHaving = (queryObj, component, children, nest) => {
+  const having = queryObj[CLAUSE_TYPE.HAVING];
+  if (having) {
+    selectHaving(having, component, children, nest);
+  }
+};
+
+export const selectQuery = (queryObj, component, children, nest) => {
+  const cols = queryObj.columns;
+
+  invariant(cols !== undefined, "Columns don't exist on queryObj");
+  invariant(Array.isArray(cols), "Columns is not an array");
+
+  children.push(generateSpanChild("SELECT"));
+  children.push(
+    generateInputChild({
+      onChange: (e) => {
+        assignAST(cols, getASTArr(e.target.value));
+        console.log(`select columns, nest ${nest} updated`);
+      },
+    })
+  );
+
+  handleFrom(queryObj, component, children, nest);
+  handleWhere(queryObj, component, children, nest);
+  handleUnion(queryObj, component, children, nest);
+  handleHaving(queryObj, component, children, nest);
 };
