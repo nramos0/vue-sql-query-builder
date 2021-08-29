@@ -1,0 +1,39 @@
+/* eslint-disable no-unused-vars */
+import invariant from "invariant";
+import { generateSpanChild, generateInputChild, getASTValue } from "../../util";
+import { constants } from "../../../config/constants";
+
+const { EXPR_TYPE, VALID_VALUE_TYPES } = constants;
+
+export const unaryOp = (operator, value, component, children, nest) => {
+  const isColumnRef = value.type === EXPR_TYPE.COLUMN_REF;
+  const expressionIsValid =
+    isColumnRef ||
+    VALID_VALUE_TYPES.some((validType) => value.type === validType);
+
+  invariant(
+    expressionIsValid,
+    `Unsupported unary expression type ${value.type}`
+  );
+
+  children.push(generateSpanChild(operator));
+  children.push(
+    generateInputChild({
+      onChange: (e) => {
+        const astValue = getASTValue(e.target.value);
+
+        if (
+          astValue.type !== EXPR_TYPE.COLUMN_REF &&
+          !VALID_VALUE_TYPES.includes(astValue.type)
+        ) {
+          throw new Error(
+            `Invalid type ${astValue.type} for value ${value} in 'unary op nest ${nest}'`
+          );
+        }
+        value.expr = astValue;
+
+        console.log(`unary op nest ${nest} updated`);
+      },
+    })
+  );
+};

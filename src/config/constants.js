@@ -1,3 +1,17 @@
+const whereHavingAllowedOps = [
+  "IN",
+  "=",
+  "!=",
+  "<>",
+  ">",
+  "<",
+  "<=",
+  ">=",
+  "AND",
+  "OR",
+  "NOT",
+];
+
 const constants = {
   QUERY_MODEL: {
     DISPLAY_PLACEHOLDER: {
@@ -30,6 +44,8 @@ const constants = {
     WHERE: "where",
     UNION: "union",
     JOIN: "join",
+    HAVING: "having",
+    GROUPBY: "groupby",
   },
 
   QUERY_TYPE: {
@@ -38,9 +54,32 @@ const constants = {
 
   SUPPORTED_OPERATORS: {
     SELECT: {
-      WHERE: ["IN", "=", "!=", "<>", ">", "<", "<=", ">=", "AND", "OR", "NOT"],
+      WHERE: whereHavingAllowedOps,
+      HAVING: whereHavingAllowedOps,
     },
   },
+
+  OPERATORS: {
+    CMP: {
+      "=": true,
+      "!=": true,
+      "<>": true,
+      ">": true,
+      "<": true,
+      "<=": true,
+      ">=": true,
+    },
+    LOG: { AND: true, OR: true, NOT: true },
+  },
+
+  VALID_VALUE_TYPES: [],
 };
+
+constants.VALID_VALUE_TYPES.push(
+  constants.EXPR_TYPE.NUMBER,
+  constants.EXPR_TYPE.VALUE_STR,
+  constants.EXPR_TYPE.BOOL,
+  constants.EXPR_TYPE.UNARY_EXPR
+);
 
 export { constants };
