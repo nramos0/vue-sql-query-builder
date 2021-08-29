@@ -1,17 +1,3 @@
-const whereHavingAllowedOps = [
-  "IN",
-  "=",
-  "!=",
-  "<>",
-  ">",
-  "<",
-  "<=",
-  ">=",
-  "AND",
-  "OR",
-  "NOT",
-];
-
 const constants = {
   QUERY_MODEL: {
     DISPLAY_PLACEHOLDER: {
@@ -53,33 +39,41 @@ const constants = {
   },
 
   SUPPORTED_OPERATORS: {
-    SELECT: {
-      WHERE: whereHavingAllowedOps,
-      HAVING: whereHavingAllowedOps,
+    BOOL_EXPR: {
+      IN: 1,
+      "=": 1,
+      "!=": 1,
+      "<>": 1,
+      ">": 1,
+      "<": 1,
+      "<=": 1,
+      ">=": 1,
+      AND: 1,
+      OR: 1,
+      NOT: 1,
     },
   },
 
   OPERATORS: {
     CMP: {
-      "=": true,
-      "!=": true,
-      "<>": true,
-      ">": true,
-      "<": true,
-      "<=": true,
-      ">=": true,
+      "=": 1,
+      "!=": 1,
+      "<>": 1,
+      ">": 1,
+      "<": 1,
+      "<=": 1,
+      ">=": 1,
     },
-    LOG: { AND: true, OR: true, NOT: true },
+    LOG: { AND: 1, OR: 1, NOT: 1 },
   },
 
-  VALID_VALUE_TYPES: [],
+  VALID_VALUE_TYPES: {},
 };
 
-constants.VALID_VALUE_TYPES.push(
-  constants.EXPR_TYPE.NUMBER,
-  constants.EXPR_TYPE.VALUE_STR,
-  constants.EXPR_TYPE.BOOL,
-  constants.EXPR_TYPE.UNARY_EXPR
-);
+// there is probably a more idomatic way to do this
+constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.NUMBER] = 1;
+constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.VALUE_STR] = 1;
+constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.BOOL] = 1;
+constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.UNARY_EXPR] = 1;
 
 export { constants };

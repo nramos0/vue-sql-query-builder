@@ -10,19 +10,17 @@ import { constants } from "../../../../config/constants";
 
 const { EXPR_TYPE, VALID_VALUE_TYPES } = constants;
 
-export const whereCmp = (operator, left, right, component, children, nest) => {
+export const cmp = (operator, left, right, component, children, nest) => {
   const leftIsColumn = left.type === EXPR_TYPE.COLUMN_REF;
   const rightIsColumn = right.type === EXPR_TYPE.COLUMN_REF;
 
   const expressionIsValid =
-    (leftIsColumn || rightIsColumn) &&
-    VALID_VALUE_TYPES.some(
-      (validType) => left.type === validType || right.type === validType
-    );
+    ((leftIsColumn || rightIsColumn) && VALID_VALUE_TYPES[left.type]) ||
+    VALID_VALUE_TYPES[right.type];
 
   invariant(
     expressionIsValid,
-    `Unsupported WHERE binary expression '${operator}' type pair: Left = ${left.type}, Right = ${right.type}`
+    `Unsupported cmp binary expression '${operator}' type pair: Left = ${left.type}, Right = ${right.type}`
   );
 
   let leftToAssign = left;
@@ -35,7 +33,7 @@ export const whereCmp = (operator, left, right, component, children, nest) => {
     generateInputChild({
       onChange: (e) => {
         assignAST(leftToAssign, getASTValue(e.target.value));
-        console.log(`where cmp ${operator} left ${nest} updated`);
+        console.log(`cmp ${operator} left ${nest} updated`);
       },
     })
   );
@@ -52,7 +50,7 @@ export const whereCmp = (operator, left, right, component, children, nest) => {
     generateInputChild({
       onChange: (e) => {
         assignAST(rightToAssign, getASTValue(e.target.value));
-        console.log(`where cmp ${operator} right ${nest} updated`);
+        console.log(`cmp ${operator} right ${nest} updated`);
       },
     })
   );

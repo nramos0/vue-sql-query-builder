@@ -7,9 +7,7 @@ const { EXPR_TYPE, VALID_VALUE_TYPES } = constants;
 
 export const unaryOp = (operator, value, component, children, nest) => {
   const isColumnRef = value.type === EXPR_TYPE.COLUMN_REF;
-  const expressionIsValid =
-    isColumnRef ||
-    VALID_VALUE_TYPES.some((validType) => value.type === validType);
+  const expressionIsValid = isColumnRef || VALID_VALUE_TYPES[value.type];
 
   invariant(
     expressionIsValid,
@@ -24,7 +22,7 @@ export const unaryOp = (operator, value, component, children, nest) => {
 
         if (
           astValue.type !== EXPR_TYPE.COLUMN_REF &&
-          !VALID_VALUE_TYPES.includes(astValue.type)
+          !VALID_VALUE_TYPES[astValue.type]
         ) {
           throw new Error(
             `Invalid type ${astValue.type} for value ${value} in 'unary op nest ${nest}'`

@@ -2,11 +2,11 @@
 import invariant from "invariant";
 import { generateSpanChild } from "./../../../util";
 import { constants } from "../../../../config/constants";
-import { selectWhere } from "../where";
+import { binaryOp } from "../binaryOp";
 
 const { EXPR_TYPE } = constants;
 
-export const whereLog = (operator, left, right, component, children, nest) => {
+export const log = (operator, left, right, component, children, nest) => {
   const expressionIsValid =
     left.type === EXPR_TYPE.BINARY_EXPR && right.type === EXPR_TYPE.BINARY_EXPR;
 
@@ -15,7 +15,7 @@ export const whereLog = (operator, left, right, component, children, nest) => {
     `Unsupported logical operator ${operator} type pair: ${left.type} ${operator} ${right.type}`
   );
 
-  selectWhere(left, component, children, nest, false);
+  binaryOp(left, component, children, nest);
   children.push(generateSpanChild(operator));
-  selectWhere(right, children, children, nest, false);
+  binaryOp(right, children, children, nest);
 };

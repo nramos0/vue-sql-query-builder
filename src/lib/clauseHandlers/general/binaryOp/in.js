@@ -12,27 +12,27 @@ import { generateQueryComponent } from "../../../queryHandlers";
 
 const { EXPR_TYPE, VALID_VALUE_TYPES, QUERY_TYPE } = constants;
 
-export const whereIn = (operator, left, right, component, children, nest) => {
+export const inOp = (operator, left, right, component, children, nest) => {
   const expressionIsValid =
     left.type === EXPR_TYPE.COLUMN_REF && right.type === EXPR_TYPE.EXPR_LIST;
 
   invariant(
     expressionIsValid,
-    `Unsupported WHERE binary expression 'IN' type pair: Left = ${left.type}, Right = ${right.type}`
+    `Unsupported binary expression 'IN' type pair: Left = ${left.type}, Right = ${right.type}`
   );
 
   children.push(
     generateInputChild({
       onChange: (e) => {
         assignAST(left, getASTValue(e.target.value));
-        console.log(`where in left ${nest} updated`);
+        console.log(`IN left ${nest} updated`);
       },
     })
   );
   children.push(generateSpanChild(operator));
 
   // isNested uses a .some() on the right.value expression list array
-  // this line really means "if at least one expression in the "in" is nested"
+  // this line really means "if at least one expression in the "IN" is nested"
   if (isNested(right.value)) {
     let hasOuterParen = false;
     if (Array.isArray(right.value) && right.value.length > 1) {
@@ -58,8 +58,8 @@ export const whereIn = (operator, left, right, component, children, nest) => {
         children.push(generateSpanChild(", ", { marginRight: "0px" }));
       } else {
         invariant(
-          VALID_VALUE_TYPES.includes(item.type),
-          `Unsupported right value type for WHERE .. IN (..) call: ${item.type}`
+          VALID_VALUE_TYPES[item.type],
+          `Unsupported right value type for IN (..) call: ${item.type}`
         );
 
         children.push(
@@ -67,15 +67,15 @@ export const whereIn = (operator, left, right, component, children, nest) => {
             onChange: (e) => {
               const astValue = getASTValue(e.target.value);
 
-              if (!VALID_VALUE_TYPES.includes(astValue.type)) {
+              if (!VALID_VALUE_TYPES[astValue.type]) {
                 throw new Error(
-                  `Invalid type ${astValue.type} for value ${e.target.value} in 'where in right, nest ${nest}'`
+                  `Invalid type ${astValue.type} for value ${e.target.value} in 'IN right, nest ${nest}'`
                 );
               }
 
               right.value[index] = astValue;
 
-              console.log(`where in right nest ${nest} index ${index} updated`);
+              console.log(`IN right nest ${nest} index ${index} updated`);
             },
           })
         );
@@ -91,14 +91,14 @@ export const whereIn = (operator, left, right, component, children, nest) => {
     }
   } else {
     invariant(
-      right.value.every((expr) => VALID_VALUE_TYPES.includes(expr.type)),
-      'Expression list for "in" operator contains one or more values that are not strings, numbers, or booleans'
+      right.value.every((expr) => VALID_VALUE_TYPES[expr.type]),
+      'Expression list for "IN" operator contains one or more values that are not strings, numbers, or booleans'
     );
     children.push(
       generateInputChild({
         onChange: (e) => {
           assignAST(right, getASTValue(e.target.value));
-          console.log(`where in right, nest ${nest} updated`);
+          console.log(`IN right, nest ${nest} updated`);
         },
       })
     );
