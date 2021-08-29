@@ -13,6 +13,7 @@ import {
   selectJoin,
   selectUnion,
   selectHaving,
+  selectGroupby,
 } from "../clauseHandlers";
 
 const { CLAUSE_TYPE } = constants;
@@ -71,6 +72,13 @@ const handleHaving = (queryObj, component, children, nest) => {
   }
 };
 
+const handleGroupby = (queryObj, component, children, nest) => {
+  const groupby = queryObj[CLAUSE_TYPE.GROUPBY];
+  if (groupby) {
+    selectGroupby(groupby, component, children, nest);
+  }
+};
+
 export const selectQuery = (queryObj, component, children, nest) => {
   const cols = queryObj.columns;
 
@@ -87,8 +95,11 @@ export const selectQuery = (queryObj, component, children, nest) => {
     })
   );
 
-  handleFrom(queryObj, component, children, nest);
-  handleWhere(queryObj, component, children, nest);
-  handleUnion(queryObj, component, children, nest);
-  handleHaving(queryObj, component, children, nest);
+  [
+    handleFrom,
+    handleWhere,
+    handleUnion,
+    handleHaving,
+    handleGroupby,
+  ].forEach((fn) => fn(queryObj, component, children, nest));
 };
