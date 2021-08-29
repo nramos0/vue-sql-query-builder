@@ -22,7 +22,7 @@ const { CLAUSE_TYPE } = constants;
 const handleFrom = (queryObj, component, children, nest) => {
   const from = queryObj[CLAUSE_TYPE.FROM];
   if (from) {
-    selectFrom(from, queryObj, component, children, nest);
+    selectFrom(from, component, children, nest);
     // Join Clause
     if (from.length >= 2 && from[1][CLAUSE_TYPE.JOIN]) {
       // If second item in `from` has join item
@@ -71,7 +71,7 @@ const handleUnion = (queryObj, component, children, nest) => {
     );
     const nextFrom = nextQuery[CLAUSE_TYPE.FROM];
     if (nextFrom) {
-      selectFrom(nextFrom, nextQuery, component, children, nest);
+      selectFrom(nextFrom, component, children, nest);
     }
     const nextWhere = nextQuery[CLAUSE_TYPE.WHERE];
     if (nextWhere) {

@@ -8,7 +8,7 @@ import {
   getOnFocusAndOnBlur,
 } from "../../util";
 
-export const selectFrom = (from, select, component, children, nest) => {
+export const selectFrom = (from, component, children, nest) => {
   children.push(generateSpanChild("FROM"));
 
   if (isNested(from)) {
@@ -35,14 +35,14 @@ export const selectFrom = (from, select, component, children, nest) => {
           console.log(`select from, nest ${nest}`);
         },
         ...getOnFocusAndOnBlur(component, (newQueryObj) => {
-          select.from = [
+          assignAST(from, [
             {
               as: null,
               expr: {
                 ast: newQueryObj,
               },
             },
-          ];
+          ]);
         }),
       })
     );
