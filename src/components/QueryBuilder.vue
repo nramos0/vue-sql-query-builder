@@ -133,6 +133,17 @@ export default {
       </div>
     );
   },
+  updated: function() {
+    // if some input boxes stayed after rendered new model,
+    // manually trigger v-on:change function to set stuff in the queryObj
+    this.$el.querySelectorAll("input.queryInput").forEach((element) => {
+      if (element.value) {
+        var event = document.createEvent("HTMLEvents");
+        event.initEvent("change", false, true);
+        element.dispatchEvent(event);
+      }
+    });
+  },
 };
 </script>
 

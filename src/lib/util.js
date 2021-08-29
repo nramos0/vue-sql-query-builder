@@ -42,6 +42,7 @@ const generateInputChild = (
 ) => {
   return (h, key) => (
     <input
+      class="queryInput"
       key={key}
       on-change={onChange}
       on-focus={onFocus}
@@ -133,7 +134,6 @@ const parseJoin = (join, on) => {
   // if null set to parse placeholder
   join = join ? join : c_temp;
   on = on ? on : c_temp;
-  console.log(`SELECT ${c_temp} FROM ${c_temp} JOIN ${join} ON ${on}`);
   return parser.astify(`SELECT ${c_temp} FROM ${c_temp} JOIN ${join} ON ${on}`);
 };
 
