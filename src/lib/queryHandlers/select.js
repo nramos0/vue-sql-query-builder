@@ -14,6 +14,7 @@ import {
   selectUnion,
   selectHaving,
   selectGroupby,
+  selectOrderby,
 } from "../clauseHandlers";
 
 const { CLAUSE_TYPE } = constants;
@@ -79,6 +80,13 @@ const handleUnion = (queryObj, component, children, nest) => {
   }
 };
 
+const handleOrderby = (queryObj, component, children, nest) => {
+  const orderby = queryObj[CLAUSE_TYPE.ORDERBY];
+  if (orderby) {
+    selectOrderby(orderby, component, children, nest);
+  }
+};
+
 export const selectQuery = (queryObj, component, children, nest) => {
   const cols = queryObj.columns;
 
@@ -95,11 +103,14 @@ export const selectQuery = (queryObj, component, children, nest) => {
     })
   );
 
+  // reference for correct order
+  // https://www.postgresql.org/docs/13/sql-select.html
   [
     handleFrom,
     handleWhere,
     handleGroupby,
     handleHaving,
     handleUnion,
+    handleOrderby,
   ].forEach((fn) => fn(queryObj, component, children, nest));
 };

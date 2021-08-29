@@ -32,6 +32,7 @@ const constants = {
     JOIN: "join",
     HAVING: "having",
     GROUPBY: "groupby",
+    ORDERBY: "orderby",
   },
 
   QUERY_TYPE: {
