@@ -5,7 +5,10 @@ import { constants } from "../../../config/constants";
 
 const { EXPR_TYPE, VALID_VALUE_TYPES } = constants;
 
-export const unaryOp = (operator, value, component, children, nest) => {
+export const unaryOp = (value, component, children, nest) => {
+  value.operator = value.operator.toUpperCase();
+  const { operator } = value;
+
   const isColumnRef = value.type === EXPR_TYPE.COLUMN_REF;
   const expressionIsValid = isColumnRef || VALID_VALUE_TYPES[value.type];
 

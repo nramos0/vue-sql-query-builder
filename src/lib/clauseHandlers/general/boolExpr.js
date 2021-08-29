@@ -18,17 +18,11 @@ export const boolExpr = (obj, component, children, nest) => {
     value(obj, component, children, nest);
   } else {
     // certainly an expression with an operator
-
-    // ensure alphabetic operators are always upper-case by convention
-    obj.operator = obj.operator.toUpperCase();
-
-    const { operator } = obj;
-
     if (type === EXPR_TYPE.BINARY_EXPR) {
-      binaryOp(obj, operator, component, children, nest);
+      binaryOp(obj, component, children, nest);
     } else if (type === EXPR_TYPE.UNARY_EXPR) {
       // NOT is the only unary operator in SUPPORTED_OPERATORS, so operator === 'NOT' is surely true
-      unaryOp(operator, obj, component, children, nest);
+      unaryOp(obj, component, children, nest);
     }
   }
 };

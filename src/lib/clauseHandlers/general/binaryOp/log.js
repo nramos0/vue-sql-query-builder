@@ -17,5 +17,5 @@ export const log = (operator, left, right, component, children, nest) => {
 
   binaryOp(left, component, children, nest);
   children.push(generateSpanChild(operator));
-  binaryOp(right, children, children, nest);
+  binaryOp(right, component, children, nest);
 };

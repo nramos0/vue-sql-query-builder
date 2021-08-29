@@ -7,8 +7,10 @@ const {
   OPERATORS: { CMP: CMP_OPERATORS, LOG: LOG_OPERATORS },
 } = constants;
 
-export const binaryOp = (obj, operator, component, children, nest) => {
-  const { left, right } = obj;
+export const binaryOp = (obj, component, children, nest) => {
+  obj.operator = obj.operator.toUpperCase();
+  const { left, right, operator } = obj;
+
   if (CMP_OPERATORS[operator]) {
     cmp(operator, left, right, component, children, nest);
   } else if (LOG_OPERATORS[operator]) {
