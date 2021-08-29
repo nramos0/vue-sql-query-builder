@@ -38,6 +38,20 @@ const handleWhere = (queryObj, component, children, nest) => {
   }
 };
 
+const handleGroupby = (queryObj, component, children, nest) => {
+  const groupby = queryObj[CLAUSE_TYPE.GROUPBY];
+  if (groupby) {
+    selectGroupby(groupby, component, children, nest);
+  }
+};
+
+const handleHaving = (queryObj, component, children, nest) => {
+  const having = queryObj[CLAUSE_TYPE.HAVING];
+  if (having) {
+    selectHaving(having, component, children, nest);
+  }
+};
+
 const handleUnion = (queryObj, component, children, nest) => {
   const union = queryObj[CLAUSE_TYPE.UNION];
   if (union) {
@@ -65,20 +79,6 @@ const handleUnion = (queryObj, component, children, nest) => {
   }
 };
 
-const handleHaving = (queryObj, component, children, nest) => {
-  const having = queryObj[CLAUSE_TYPE.HAVING];
-  if (having) {
-    selectHaving(having, component, children, nest);
-  }
-};
-
-const handleGroupby = (queryObj, component, children, nest) => {
-  const groupby = queryObj[CLAUSE_TYPE.GROUPBY];
-  if (groupby) {
-    selectGroupby(groupby, component, children, nest);
-  }
-};
-
 export const selectQuery = (queryObj, component, children, nest) => {
   const cols = queryObj.columns;
 
@@ -98,8 +98,8 @@ export const selectQuery = (queryObj, component, children, nest) => {
   [
     handleFrom,
     handleWhere,
-    handleUnion,
-    handleHaving,
     handleGroupby,
+    handleHaving,
+    handleUnion,
   ].forEach((fn) => fn(queryObj, component, children, nest));
 };
