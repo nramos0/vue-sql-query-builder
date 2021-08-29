@@ -72,9 +72,14 @@ const constants = {
 };
 
 // there is probably a more idomatic way to do this
-constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.NUMBER] = 1;
-constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.VALUE_STR] = 1;
-constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.BOOL] = 1;
-constants.VALID_VALUE_TYPES[constants.EXPR_TYPE.UNARY_EXPR] = 1;
+const { EXPR_TYPE } = constants;
+[
+  EXPR_TYPE.NUMBER,
+  EXPR_TYPE.VALUE_STR,
+  EXPR_TYPE.BOOL,
+  EXPR_TYPE.UNARY_EXPR,
+].forEach((type) => {
+  constants.VALID_VALUE_TYPES[type] = 1;
+});
 
 export { constants };
