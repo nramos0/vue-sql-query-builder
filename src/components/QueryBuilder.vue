@@ -1,6 +1,7 @@
 <script>
 /* eslint-disable no-unused-vars */
 import KeywordButton from "./KeywordButton.vue";
+import Dropdown from "./Dropdown.vue";
 import { parseModelString, parser } from "../lib/util";
 import { generateQueryComponent } from "../lib/queryHandlers";
 import { constants } from "../config/constants";
@@ -135,7 +136,7 @@ export default {
   },
   updated: function() {
     // if some input boxes stayed after rendered new model,
-    // manually trigger v-on:change function to set stuff in the queryObj
+    // manually trigger v-on:change function to set stuff to the queryObj
     this.$el.querySelectorAll("input.queryInput").forEach((element) => {
       if (element.value) {
         const event = document.createEvent("HTMLEvents");
