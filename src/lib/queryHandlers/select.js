@@ -60,23 +60,7 @@ const handleUnion = (queryObj, component, children, nest) => {
     const nextQuery = queryObj._next;
     const nextCols = nextQuery.columns;
     selectUnion(union, component, children, nest);
-    children.push(generateSpanChild("SELECT"));
-    children.push(
-      generateInputChild({
-        onChange: (e) => {
-          assignAST(nextCols, getASTArr(e.target.value));
-          console.log(`select columns, nest ${nest} updated`);
-        },
-      })
-    );
-    const nextFrom = nextQuery[CLAUSE_TYPE.FROM];
-    if (nextFrom) {
-      selectFrom(nextFrom, component, children, nest);
-    }
-    const nextWhere = nextQuery[CLAUSE_TYPE.WHERE];
-    if (nextWhere) {
-      selectWhere(nextWhere, component, children, nest);
-    }
+    selectQuery(nextQuery, component, children, nest);
   }
 };
 

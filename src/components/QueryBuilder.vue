@@ -138,7 +138,7 @@ export default {
     // manually trigger v-on:change function to set stuff in the queryObj
     this.$el.querySelectorAll("input.queryInput").forEach((element) => {
       if (element.value) {
-        var event = document.createEvent("HTMLEvents");
+        const event = document.createEvent("HTMLEvents");
         event.initEvent("change", false, true);
         element.dispatchEvent(event);
       }
