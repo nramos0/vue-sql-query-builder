@@ -1,10 +1,9 @@
 <template>
-  <div class="dropdown" v-on:focus="console.log('fuck')">
+  <div class="dropdown">
     <input
       v-model="textInput"
       class="input"
       autocomplete="off"
-      v-on:input="filterSuggestion"
       v-on:focus="onFocus"
       v-on:change="onChange"
       v-on:blur="onBlur"
@@ -29,8 +28,6 @@ export default {
   data: function() {
     return {
       suggestion: ["this", "is", "the", "mex", "pow", "down"],
-      // filteredSuggest is suggestion filtered according to textInput
-      filteredSuggest: [],
       textInput: "",
       show: false,
     };
@@ -43,11 +40,6 @@ export default {
     propOnBlur: Function,
   },
   methods: {
-    filterSuggestion() {
-      this.filteredSuggest = this.suggestion.filter((el) => {
-        return el.toLowerCase().startsWith(this.textInput.toLowerCase());
-      });
-    },
     setInput(text) {
       // used when selected a dropdown option, used mousedown cause mousedown comes before blur
       this.textInput = text;
@@ -55,7 +47,6 @@ export default {
       this.onChange();
     },
     onFocus() {
-      this.filterSuggestion();
       this.show = true;
       if (this.propOnFocus) {
         this.propOnFocus(this);
@@ -74,16 +65,18 @@ export default {
     },
     setSuggestions(newSuggestions) {
       this.suggestion = newSuggestions;
-      this.filterSuggestion();
     },
     test() {
       console.log("ran test");
     },
   },
-  mounted() {
-    this.filterSuggestion();
-  },
   computed: {
+    filteredSuggest() {
+      // filteredSuggest is suggestion filtered according to textInput
+      return this.suggestion.filter((el) => {
+        return el.toLowerCase().startsWith(this.textInput.toLowerCase());
+      });
+    },
     target: function() {
       // temporary fix to accomidate e.target.value for inputbox
       // will delete in future

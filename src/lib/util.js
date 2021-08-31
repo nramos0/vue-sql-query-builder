@@ -56,7 +56,6 @@ const generateInputChild = (
 const getOnFocus = (component, setNestedAST) => (e) => {
   component.setNestedAST = setNestedAST;
   console.log("did focus", e);
-  e.setSuggestions(["a", "b"]);
 };
 
 const getOnBlur = (component, setNestedAST) => (e) => {
