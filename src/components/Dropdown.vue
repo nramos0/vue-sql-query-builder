@@ -49,7 +49,9 @@ export default {
       });
     },
     setInput(text) {
+      // used when selected a dropdown option, used mousedown cause mousedown comes before blur
       this.textInput = text;
+      // onChange doesnt run when the change is not done by user
       this.onChange();
     },
     onFocus() {
@@ -69,6 +71,13 @@ export default {
       if (this.propOnBlur) {
         this.propOnBlur(this);
       }
+    },
+    setSuggestions(newSuggestions) {
+      this.suggestion = newSuggestions;
+      this.filterSuggestion();
+    },
+    test() {
+      console.log("ran test");
     },
   },
   mounted() {

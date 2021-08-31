@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Parser } from "node-sql-parser";
 import { constants } from "../config/constants";
+import Dropdown from "../components/Dropdown";
 
 export const parser = new Parser();
 
@@ -40,20 +41,22 @@ const generateInputChild = (
     onFocus: efn,
   }
 ) => {
+  // changes on-_ to propOn_
   return (h, key) => (
-    <input
+    <Dropdown
       class="queryInput"
       key={key}
-      on-change={onChange}
-      on-focus={onFocus}
-      on-blur={onBlur}
-    ></input>
+      propOnChange={onChange}
+      propOnFocus={onFocus}
+      propOnBlur={onBlur}
+    ></Dropdown>
   );
 };
 
 const getOnFocus = (component, setNestedAST) => (e) => {
   component.setNestedAST = setNestedAST;
-  console.log("did focus", e.target);
+  console.log("did focus", e);
+  e.setSuggestions(["a", "b"]);
 };
 
 const getOnBlur = (component, setNestedAST) => (e) => {
@@ -64,11 +67,11 @@ const getOnBlur = (component, setNestedAST) => (e) => {
   setTimeout(() => {
     if (component.setNestedAST === setNestedAST) {
       component.setNestedAST = null;
-      console.log("did blur", e.target);
+      console.log("did blur", e);
     } else {
       console.log(
         "tried to blur",
-        e.target,
+        e,
         "but something else already overwrote setNestedAST"
       );
     }
