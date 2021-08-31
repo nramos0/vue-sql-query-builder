@@ -134,6 +134,7 @@ export default {
 
         <div class="keyword-list">{keywordButtons}</div>
         <pre id="query">{query}</pre>
+        <DataContainer ref="datacontainer" />
       </div>
     );
   },

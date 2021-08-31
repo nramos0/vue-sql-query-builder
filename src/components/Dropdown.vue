@@ -67,7 +67,7 @@ export default {
       this.suggestion = newSuggestions;
     },
     test() {
-      console.log("ran test");
+      console.log("this is a dropdown");
     },
   },
   computed: {

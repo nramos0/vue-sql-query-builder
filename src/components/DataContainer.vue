@@ -32,19 +32,24 @@ export default {
         return [];
       } else {
         // for each table, fetch its column names, then return [tablename.columnname]
-        var arr = [];
+        var return_arr = [];
         for (const table of table_name) {
-          const val = this.dataset[table];
-          if (val) {
-            var modVal = [...val];
-            modVal.forEach(function(part, index, theArray) {
-              theArray[index] = table + "." + part;
+          const columns = this.dataset[table];
+          if (columns) {
+            var modifiedColumns = [...columns];
+            modifiedColumns.forEach(function(part, index, arr) {
+              // arr = modifiedColumn
+              // for each object, add its tablename. to prefix
+              arr[index] = table + "." + part;
             });
-            arr = [...arr, ...modVal];
+            return_arr = [...return_arr, ...modifiedColumns];
           }
         }
-        return arr;
+        return return_arr;
       }
+    },
+    test() {
+      console.log("this is a data container");
     },
   },
   mounted() {
