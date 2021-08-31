@@ -27,7 +27,7 @@ export default {
   name: "Dropdown",
   data: function() {
     return {
-      suggestion: ["this", "is", "the", "mex", "pow", "down"],
+      suggestion: [],
       textInput: "",
       show: false,
     };
@@ -146,5 +146,7 @@ li {
   font-size: 16px;
   width: 100%;
   background: rgba(200, 200, 200);
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 </style>

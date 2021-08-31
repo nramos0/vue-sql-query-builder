@@ -84,6 +84,19 @@ export const selectQuery = (queryObj, component, children, nest) => {
         assignAST(cols, getASTArr(e.target.value));
         console.log(`select columns, nest ${nest} updated`);
       },
+      onFocus: (e) => {
+        // get the datacontainer vue object
+        const datacontainer = e.$parent.$refs.datacontainer;
+
+        var tables = [];
+        // retrieve all tablenames in FROM
+        for (const fromObj of queryObj.from) {
+          tables.push(fromObj.table);
+        }
+
+        // update suggestions
+        e.setSuggestions(datacontainer.getArrayOfCol(tables));
+      },
     })
   );
 

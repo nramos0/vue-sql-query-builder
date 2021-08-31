@@ -56,6 +56,13 @@ const generateInputChild = (
 const getOnFocus = (component, setNestedAST) => (e) => {
   component.setNestedAST = setNestedAST;
   console.log("did focus", e);
+
+  // update the suggestions for FROM
+  // get the container vue object
+  const datacontainer = e.$parent.$refs.datacontainer;
+
+  // update suggestions
+  e.setSuggestions(datacontainer.getTables());
 };
 
 const getOnBlur = (component, setNestedAST) => (e) => {
