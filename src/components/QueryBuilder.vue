@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import KeywordButton from "./KeywordButton.vue";
 import Dropdown from "./Dropdown.vue";
+import DataContainer from "./DataContainer.vue";
 import { parseModelString, parser } from "../lib/util";
 import { generateQueryComponent } from "../lib/queryHandlers";
 import { constants } from "../config/constants";
@@ -11,6 +12,7 @@ export default {
   components: {
     KeywordButton,
     Dropdown,
+    DataContainer,
   },
   data() {
     // short names to reduce model length

@@ -1,0 +1,54 @@
+<template>
+  <div class="DataCont"></div>
+</template>
+
+<script>
+export default {
+  name: "DataContainer",
+  data: function() {
+    return {
+      dataset: {
+        // dictionary with keys corresponding to table, value corresponding to columns of that table
+        // test data
+        student: ["name", "id", "major"],
+        company: ["name", "ceo", "departments"],
+        stuff: ["this", "is", "stuff", "from", "a", "huge", "database", "many"],
+      },
+    };
+  },
+  methods: {
+    getData() {
+      // just fetch everything
+      return this.dataset;
+    },
+    getTables() {
+      // fetch tablenames, used by FROM
+      return Object.keys(this.dataset);
+    },
+    getArrayOfCol(table_name) {
+      // fetch column names, used by SELECT
+      console.log(Array.isArray(table_name));
+      if (!Array.isArray(table_name) || !table_name.length) {
+        return [];
+      } else {
+        // for each table, fetch its column names, then return [tablename.columnname]
+        var arr = [];
+        for (const table of table_name) {
+          const val = this.dataset[table];
+          if (val) {
+            var modVal = [...val];
+            modVal.forEach(function(part, index, theArray) {
+              theArray[index] = table + "." + part;
+            });
+            arr = [...arr, ...modVal];
+          }
+        }
+        return arr;
+      }
+    },
+  },
+  mounted() {
+    // this.data = this.$api.get_datasource_tablesCols TODO: write this in flok
+  },
+};
+</script>
