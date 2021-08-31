@@ -3,6 +3,7 @@
     <input
       v-model="textInput"
       class="queryInput"
+      ref="input"
       autocomplete="off"
       v-on:focus="onFocus"
       v-on:change="onChange"
@@ -30,6 +31,8 @@ export default {
       suggestion: [],
       textInput: "",
       show: false,
+      // if user selected suggestion, we dont want input to blur so added in a flag
+      selected_suggestion: false,
     };
   },
   props: {
@@ -45,6 +48,17 @@ export default {
       this.textInput = text;
       // onChange doesnt run when the change is not done by user
       this.onChange();
+
+      // set flag to true for a while
+      this.selected_suggestion = true;
+      setTimeout(() => {
+        if (this.selected_suggestion) {
+          this.selected_suggestion = false;
+          console.warn(
+            "For weird case where clicked on suggestion but didn't blur, should not happen"
+          );
+        }
+      }, 1);
     },
     onFocus() {
       this.show = true;
@@ -62,6 +76,13 @@ export default {
       if (this.propOnBlur) {
         this.propOnBlur(this);
       }
+      if (this.selected_suggestion) {
+        // if selecting suggestion caused blur, immediately refocus
+        setTimeout(() => {
+          this.$refs.input.focus();
+        }, 1);
+        this.selected_suggestion = false;
+      }
     },
     setSuggestions(newSuggestions) {
       this.suggestion = newSuggestions;
@@ -73,6 +94,7 @@ export default {
   computed: {
     filteredSuggest() {
       // filteredSuggest is suggestion filtered according to textInput
+      // TODO change this to accomidate for AS case and comma case
       return this.suggestion.filter((el) => {
         return el.toLowerCase().startsWith(this.textInput.toLowerCase());
       });

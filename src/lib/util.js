@@ -98,14 +98,16 @@ const getAllColumns = (queryObj, datacontainer) => {
   for (const fromObj of queryObj.from) {
     if (fromObj.table) {
       // retrieve all tablenames in FROM with same depth, this is for datacontainer to send data
-      tables.push(fromObj.table);
+      tables.push({
+        table: fromObj.table,
+        as: fromObj.as,
+      });
     } else if (fromObj.expr) {
       // retrieve all column names in SELECT columns in depth + 1
       var nextColumns = fromObj.expr.ast.columns;
       nextColumns = nextColumns.map((el) => {
-        el = el.expr;
-        // appends columnname into columns
-        return el.column;
+        // appends columnname(or alias) into columns
+        return el.as ? el.as : el.expr.column;
       });
       columns = [...columns, ...nextColumns];
     }
@@ -147,12 +149,12 @@ const getASTTable = (value) => {
 
 const assignAST = (obj, ast, i = 0) => {
   // Changed parameters, if type(obj)=type(ast)=Array then must pass in its index `i`
-  if (Array.isArray(obj)) {
-    // Join has two items in array 'from', both gets deleted when changing FROM clause, which caused error
-    // TODO: Might find a better way to do this
-    obj = obj[i];
-    ast = ast[i];
-  }
+  // if (Array.isArray(obj)) {
+  //   // Join has two items in array 'from', both gets deleted when changing FROM clause, which caused error
+  //   // TODO: Might find a better way to do this
+  //   obj = obj[i];
+  //   ast = ast[i];
+  // }
   for (const prop in obj) {
     delete obj[prop];
   }

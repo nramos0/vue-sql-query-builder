@@ -26,20 +26,21 @@ export default {
       return Object.keys(this.dataset);
     },
     getArrayOfCol(table_name) {
-      // fetch column names, used by SELECT
+      // Usage: fetch column names, used by SELECT
+      // Parameters: table_name = { table: "tablename string", as: "alias, can be null" }
       if (!Array.isArray(table_name) || !table_name.length) {
         return [];
       } else {
         // for each table, fetch its column names, then return [tablename.columnname]
         var return_arr = [];
-        for (const table of table_name) {
+        for (const { table, as } of table_name) {
           const columns = this.dataset[table];
           if (columns) {
             var modifiedColumns = [...columns];
             modifiedColumns.forEach(function(part, index, arr) {
               // arr = modifiedColumn
-              // for each object, add its tablename. to prefix
-              arr[index] = table + "." + part;
+              // for each object, add its tablename(or alias) to prefix
+              arr[index] = (as ? as : table) + "." + part;
             });
             return_arr = [...return_arr, ...modifiedColumns];
           }
