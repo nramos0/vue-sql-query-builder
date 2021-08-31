@@ -10,6 +10,7 @@ export default {
   name: "QueryBuilder",
   components: {
     KeywordButton,
+    Dropdown,
   },
   data() {
     // short names to reduce model length
