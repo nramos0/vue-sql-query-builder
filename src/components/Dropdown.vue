@@ -2,7 +2,7 @@
   <div class="dropdown">
     <input
       v-model="textInput"
-      class="input"
+      class="queryInput"
       autocomplete="off"
       v-on:focus="onFocus"
       v-on:change="onChange"

@@ -91,6 +91,29 @@ const getOnFocusAndOnBlur = (component, setNestedAST) => {
   };
 };
 
+const getAllColumns = (queryObj, datacontainer) => {
+  var columns = [];
+  var tables = [];
+
+  for (const fromObj of queryObj.from) {
+    if (fromObj.table) {
+      // retrieve all tablenames in FROM with same depth, this is for datacontainer to send data
+      tables.push(fromObj.table);
+    } else if (fromObj.expr) {
+      // retrieve all column names in SELECT columns in depth + 1
+      var nextColumns = fromObj.expr.ast.columns;
+      nextColumns = nextColumns.map((el) => {
+        el = el.expr;
+        // appends columnname into columns
+        return el.column;
+      });
+      columns = [...columns, ...nextColumns];
+    }
+  }
+  // for table in current depth, get corresponding columnname
+  return [...columns, ...datacontainer.getArrayOfCol(tables)];
+};
+
 const isNested = (arr) => {
   if (typeof arr !== "object") {
     throw new Error(`Non-object parameter passed to isNested: ${arr}`);
@@ -178,4 +201,5 @@ export {
   getOnFocus,
   getOnBlur,
   getOnFocusAndOnBlur,
+  getAllColumns,
 };

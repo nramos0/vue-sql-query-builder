@@ -27,7 +27,6 @@ export default {
     },
     getArrayOfCol(table_name) {
       // fetch column names, used by SELECT
-      console.log(Array.isArray(table_name));
       if (!Array.isArray(table_name) || !table_name.length) {
         return [];
       } else {

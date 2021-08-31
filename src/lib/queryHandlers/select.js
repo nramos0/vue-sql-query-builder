@@ -5,6 +5,7 @@ import {
   generateInputChild,
   assignAST,
   getASTArr,
+  getAllColumns,
 } from "../util";
 import { constants } from "../../config/constants";
 import {
@@ -88,14 +89,11 @@ export const selectQuery = (queryObj, component, children, nest) => {
         // get the datacontainer vue object
         const datacontainer = e.$parent.$refs.datacontainer;
 
-        var tables = [];
-        // retrieve all tablenames in FROM
-        for (const fromObj of queryObj.from) {
-          tables.push(fromObj.table);
-        }
+        //get columns
+        var columns = getAllColumns(queryObj, datacontainer);
 
         // update suggestions
-        e.setSuggestions(datacontainer.getArrayOfCol(tables));
+        e.setSuggestions(columns);
       },
     })
   );
