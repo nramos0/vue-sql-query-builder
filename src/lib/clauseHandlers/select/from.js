@@ -44,6 +44,7 @@ export const selectFrom = (from, component, children, nest) => {
             },
           ]);
         }),
+        inputType: "from",
       })
     );
   }

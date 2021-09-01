@@ -95,6 +95,7 @@ export const selectQuery = (queryObj, component, children, nest) => {
         // update suggestions
         e.setSuggestions(columns);
       },
+      inputType: "select",
     })
   );
 

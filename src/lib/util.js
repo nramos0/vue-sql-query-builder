@@ -35,10 +35,11 @@ const generateSpanChild = (text, style, newlineBefore, newlineAfter) => {
 const efn = () => {};
 
 const generateInputChild = (
-  { onChange = efn, onFocus = efn, onBlur = efn } = {
+  { onChange = efn, onFocus = efn, onBlur = efn, inputType = "" } = {
     onChange: efn,
     onBlur: efn,
     onFocus: efn,
+    inputType: "",
   }
 ) => {
   // changes on-_ to propOn_
@@ -49,6 +50,7 @@ const generateInputChild = (
       propOnChange={onChange}
       propOnFocus={onFocus}
       propOnBlur={onBlur}
+      inputType={inputType}
     ></Dropdown>
   );
 };
@@ -95,21 +97,23 @@ const getAllColumns = (queryObj, datacontainer) => {
   var columns = [];
   var tables = [];
 
-  for (const fromObj of queryObj.from) {
-    if (fromObj.table) {
-      // retrieve all tablenames in FROM with same depth, this is for datacontainer to send data
-      tables.push({
-        table: fromObj.table,
-        as: fromObj.as,
-      });
-    } else if (fromObj.expr) {
-      // retrieve all column names in SELECT columns in depth + 1
-      var nextColumns = fromObj.expr.ast.columns;
-      nextColumns = nextColumns.map((el) => {
-        // appends columnname(or alias) into columns
-        return el.as ? el.as : el.expr.column;
-      });
-      columns = [...columns, ...nextColumns];
+  if (queryObj.from) {
+    for (const fromObj of queryObj.from) {
+      if (fromObj.table) {
+        // retrieve all tablenames in FROM with same depth, this is for datacontainer to send data
+        tables.push({
+          table: fromObj.table,
+          as: fromObj.as,
+        });
+      } else if (fromObj.expr) {
+        // retrieve all column names in SELECT columns in depth + 1
+        var nextColumns = fromObj.expr.ast.columns;
+        nextColumns = nextColumns.map((el) => {
+          // appends columnname(or alias) into columns
+          return el.as ? el.as : el.expr.column;
+        });
+        columns = [...columns, ...nextColumns];
+      }
     }
   }
   // for table in current depth, get corresponding columnname
@@ -135,8 +139,8 @@ const getPlaceholdIfEmpty = (value) => {
   // if user input is empty return placeholder for col
   // Parse value into: [s1] AS [s2],[s3]
   const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
-  const checkAsComma = /\sAS\s|,/gi;
-  var restultArr = value.split(checkAsComma);
+  const check_As_Comma = /(\sAS\s|,)/gi;
+  var restultArr = value.split(check_As_Comma);
   // check if it is empty or all spaces
   const checkIfEmpty = /^\s*$/;
   restultArr = restultArr.map((el) => {
