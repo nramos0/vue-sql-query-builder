@@ -131,7 +131,13 @@ const isNested = (arr) => {
   );
 };
 
+const getPlaceholdIfEmpty = (value) => {
+  // if user input is empty return placeholder for col
+  return value ? value : constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
+};
+
 const parseSelectValue = (value) => {
+  value = getPlaceholdIfEmpty(value);
   return parser.astify(`SELECT ${value}`);
 };
 
@@ -144,6 +150,7 @@ const getASTArr = (value) => {
 };
 
 const getASTTable = (value) => {
+  value = getPlaceholdIfEmpty(value);
   return parser.astify(`SELECT * FROM ${value}`).from;
 };
 
@@ -166,8 +173,8 @@ const assignAST = (obj, ast, i = 0) => {
 const parseJoin = (join, on) => {
   const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
   // if null set to parse placeholder
-  join = join ? join : c_temp;
-  on = on ? on : c_temp;
+  join = getPlaceholdIfEmpty(join);
+  on = getPlaceholdIfEmpty(on);
   return parser.astify(`SELECT ${c_temp} FROM ${c_temp} JOIN ${join} ON ${on}`);
 };
 
