@@ -21,7 +21,7 @@ export const unaryOp = (value, component, children, nest) => {
   children.push(
     generateInputChild({
       onChange: (e) => {
-        const astValue = getASTValue(e.target.value);
+        const astValue = getASTValue(e.textInput);
 
         if (
           astValue.type !== EXPR_TYPE.COLUMN_REF &&

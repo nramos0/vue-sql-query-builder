@@ -13,7 +13,7 @@ export const selectJoin = (joinObj, component, children, nest) => {
   children.push(
     generateInputChild({
       onChange: (e) => {
-        setAST_Join(joinObj, e.target.value);
+        setAST_Join(joinObj, e.textInput);
         console.log(`clause value nest ${nest} updated`);
       },
     })
@@ -24,7 +24,7 @@ export const selectJoin = (joinObj, component, children, nest) => {
     children.push(
       generateInputChild({
         onChange: (e) => {
-          setAST_On(onObj, e.target.value);
+          setAST_On(onObj, e.textInput);
           console.log(`clause value nest ${nest} updated`);
         },
       })

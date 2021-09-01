@@ -24,7 +24,7 @@ export const inOp = (operator, left, right, component, children, nest) => {
   children.push(
     generateInputChild({
       onChange: (e) => {
-        assignAST(left, getASTValue(e.target.value));
+        assignAST(left, getASTValue(e.textInput));
         console.log(`IN left ${nest} updated`);
       },
     })
@@ -65,11 +65,11 @@ export const inOp = (operator, left, right, component, children, nest) => {
         children.push(
           generateInputChild({
             onChange: (e) => {
-              const astValue = getASTValue(e.target.value);
+              const astValue = getASTValue(e.textInput);
 
               if (!VALID_VALUE_TYPES[astValue.type]) {
                 throw new Error(
-                  `Invalid type ${astValue.type} for value ${e.target.value} in 'IN right, nest ${nest}'`
+                  `Invalid type ${astValue.type} for value ${e.textInput} in 'IN right, nest ${nest}'`
                 );
               }
 
@@ -97,7 +97,7 @@ export const inOp = (operator, left, right, component, children, nest) => {
     children.push(
       generateInputChild({
         onChange: (e) => {
-          assignAST(right, getASTValue(e.target.value));
+          assignAST(right, getASTValue(e.textInput));
           console.log(`IN right, nest ${nest} updated`);
         },
       })

@@ -133,7 +133,17 @@ const isNested = (arr) => {
 
 const getPlaceholdIfEmpty = (value) => {
   // if user input is empty return placeholder for col
-  return value ? value : constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
+  // Parse value into: [s1] AS [s2],[s3]
+  const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
+  const checkAsComma = /\sAS\s|,/gi;
+  var restultArr = value.split(checkAsComma);
+  // check if it is empty or all spaces
+  const checkIfEmpty = /^\s*$/;
+  restultArr = restultArr.map((el) => {
+    // if el satisfies check change to placeholder
+    return checkIfEmpty.test(el) ? c_temp : el;
+  });
+  return restultArr.join("");
 };
 
 const parseSelectValue = (value) => {

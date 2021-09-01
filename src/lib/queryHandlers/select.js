@@ -82,7 +82,7 @@ export const selectQuery = (queryObj, component, children, nest) => {
   children.push(
     generateInputChild({
       onChange: (e) => {
-        assignAST(cols, getASTArr(e.target.value));
+        assignAST(cols, getASTArr(e.textInput));
         console.log(`select columns, nest ${nest} updated`);
       },
       onFocus: (e) => {

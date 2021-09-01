@@ -31,7 +31,7 @@ export const selectFrom = (from, component, children, nest) => {
     children.push(
       generateInputChild({
         onChange: (e) => {
-          assignAST(from, getASTTable(e.target.value));
+          assignAST(from, getASTTable(e.textInput));
           console.log(`select from, nest ${nest}`);
         },
         ...getOnFocusAndOnBlur(component, (newQueryObj) => {

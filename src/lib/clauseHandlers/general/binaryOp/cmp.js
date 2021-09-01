@@ -32,7 +32,7 @@ export const cmp = (operator, left, right, component, children, nest) => {
   children.push(
     generateInputChild({
       onChange: (e) => {
-        assignAST(leftToAssign, getASTValue(e.target.value));
+        assignAST(leftToAssign, getASTValue(e.textInput));
         console.log(`cmp ${operator} left ${nest} updated`);
       },
     })
@@ -49,7 +49,7 @@ export const cmp = (operator, left, right, component, children, nest) => {
   children.push(
     generateInputChild({
       onChange: (e) => {
-        assignAST(rightToAssign, getASTValue(e.target.value));
+        assignAST(rightToAssign, getASTValue(e.textInput));
         console.log(`cmp ${operator} right ${nest} updated`);
       },
     })

@@ -102,6 +102,7 @@ export default {
     target: function() {
       // temporary fix to accomidate e.target.value for inputbox
       // will delete in future
+      console.error("Changed e.target.value to e.textInput");
       return {
         value: this.textInput,
       };
