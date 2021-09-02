@@ -90,7 +90,7 @@ export const selectQuery = (queryObj, component, children, nest) => {
         const datacontainer = e.$parent.$refs.datacontainer;
 
         //get columns
-        var columns = getAllColumns(queryObj, datacontainer);
+        const columns = getAllColumns(queryObj, datacontainer);
 
         // update suggestions
         e.setSuggestions(columns);

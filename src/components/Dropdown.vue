@@ -1,25 +1,18 @@
 <template>
   <div class="dropdown">
-    <input
+    <el-autocomplete
+      class="input"
       v-model="textInput"
-      class="queryInput"
-      ref="input"
-      autocomplete="off"
+      :fetch-suggestions="querySearch"
       v-on:focus="onFocus"
       v-on:change="onChange"
       v-on:blur="onBlur"
-    />
-    <div class="filtered" v-if="computedSuggest && show">
-      <ul>
-        <li
-          v-for="suggest in computedSuggest"
-          v-bind:key="suggest.id"
-          v-on:mousedown="setInput(suggest.value)"
-        >
-          {{ suggest.show }}
-        </li>
-      </ul>
-    </div>
+      v-on:select="onChange"
+    >
+      <template slot-scope="props">
+        <div class="show">{{ props.item.show }}</div>
+      </template>
+    </el-autocomplete>
   </div>
 </template>
 
@@ -37,9 +30,6 @@ export default {
         select: "select",
         from: "from",
       },
-
-      // *not important* if user selected suggestion, we dont want input to blur so added in a flag
-      selected_suggestion: false,
     };
   },
   props: {
@@ -58,24 +48,6 @@ export default {
     },
   },
   methods: {
-    setInput(text) {
-      // used when selected a dropdown option, used mousedown cause mousedown comes before blur
-      this.textInput = text;
-      // onChange doesnt run when the change is not done by user
-      this.onChange();
-
-      // *not important* set selected_suggestion flag to true for a while so doesnt blur
-      this.selected_suggestion = true;
-      setTimeout(() => {
-        if (this.selected_suggestion) {
-          this.selected_suggestion = false;
-          console.warn(
-            "For weird case where clicked on suggestion but didn't blur, should not happen"
-          );
-        }
-      }, 1);
-    },
-
     onFocus() {
       this.show = true;
       if (this.propOnFocus) {
@@ -93,14 +65,6 @@ export default {
       this.show = false;
       if (this.propOnBlur) {
         this.propOnBlur(this);
-      }
-      // *not important*
-      if (this.selected_suggestion) {
-        // if selecting suggestion caused blur, immediately refocus
-        setTimeout(() => {
-          this.$refs.input.focus();
-        }, 1);
-        this.selected_suggestion = false;
       }
     },
 
@@ -152,8 +116,6 @@ export default {
       ) {
         // check if text is of the form "a AS b"
         // if so, append ", " to it, corresponds to when user finished typing alias
-        console.log("YOU WERE A CHOSEN ONE HARRY");
-        console.log(splitBy_As_Comma.at(-1) + ", ");
         return [
           {
             value: text + ", ",
@@ -193,6 +155,11 @@ export default {
 
       return filteredSuggestObj;
     },
+
+    querySearch(text, cb) {
+      // transfer data to element-ui's style
+      cb(this.computedSuggest);
+    },
   },
   computed: {
     computedSuggest() {
@@ -206,10 +173,6 @@ export default {
 
       const check = this.availableInputs;
       if (this.inputType === check.select || this.inputType === check.from) {
-        console.log(
-          "sugg",
-          this.select_from_Compute_Suggestion(this.textInput)
-        );
         return this.select_from_Compute_Suggestion(this.textInput);
       }
 
@@ -252,16 +215,6 @@ export default {
 </script>
 
 <style scoped>
-/* Prettify stuff, probably will change */
-
-.dropdown {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
 /* Positioning */
 
 .dropdown {
@@ -281,35 +234,5 @@ input {
   height: 100%;
   margin: 0;
   padding: 0;
-}
-
-.filtered {
-  position: absolute;
-  width: 100%;
-  height: 10px;
-  top: 110%;
-  left: 0;
-  z-index: 1;
-  overflow: visible;
-}
-
-ul {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  position: relative;
-  list-style-type: none;
-  cursor: pointer;
-  font-size: 16px;
-  width: 100%;
-  background: rgba(200, 200, 200);
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 </style>

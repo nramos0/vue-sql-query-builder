@@ -94,7 +94,7 @@ export default {
       : "No Query. Please select a model from above.";
 
     return (
-      <div>
+      <div id="queryBuilder">
         <div
           style={{
             display: "flex",
@@ -102,7 +102,8 @@ export default {
             marginBottom: "10px",
           }}
         >
-          <button
+          <el-button
+            type="info"
             on-click={() => {
               console.log("queryObj", this.queryObj);
               console.log("setNestedAST", this.setNestedAST);
@@ -112,8 +113,9 @@ export default {
             }}
           >
             Print Data
-          </button>
-          <button
+          </el-button>
+          <el-button
+            type="info"
             on-click={() => {
               this.setNestedAST = null;
             }}
@@ -122,14 +124,15 @@ export default {
             }}
           >
             Clear Selected Input
-          </button>
-          <button
+          </el-button>
+          <el-button
+            type="info"
             on-click={() => {
               console.log(parser.sqlify(this.queryObj));
             }}
           >
             Print Query
-          </button>
+          </el-button>
         </div>
 
         <div class="keyword-list">{keywordButtons}</div>
@@ -141,7 +144,7 @@ export default {
   updated: function() {
     // if some input boxes stayed after rendered new model,
     // manually trigger v-on:change function to set stuff to the queryObj
-    this.$el.querySelectorAll("input.queryInput").forEach((element) => {
+    this.$el.querySelectorAll("#query input").forEach((element) => {
       if (element.value) {
         const event = document.createEvent("HTMLEvents");
         event.initEvent("change", false, true);
@@ -153,6 +156,11 @@ export default {
 </script>
 
 <style scoped>
+#queryBuilder {
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
 .keyword-list {
   display: flex;
   flex-direction: row;
@@ -163,7 +171,7 @@ export default {
 }
 
 p {
-  margin: 0;
+  margin: 15px 0;
 }
 
 span,
