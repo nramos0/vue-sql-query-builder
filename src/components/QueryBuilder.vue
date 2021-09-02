@@ -81,7 +81,7 @@ export default {
   },
   render(h) {
     const keywordButtons = this.models.map((model, id) => {
-      // cannot close Default (id === 0)
+      // if id ===0 which means Default model, dont allow close
       return id ? (
         <el-tab-pane name={id.toString()} key={id} label={model.name} closable>
           {model.value}
@@ -93,13 +93,15 @@ export default {
       );
     });
 
+    // query to render the model into span & inputs
     const query = this.error
       ? this.error.text
       : this.queryComponent
       ? this.queryComponent(h)
       : "No Query. Please select a model from above.";
 
-    const tabs = h(
+    // tabs to display the models
+    const modelTabs = h(
       "el-tabs",
       {
         props: { type: "border-card" },
@@ -115,34 +117,7 @@ export default {
       keywordButtons
     );
 
-    const createNewModel = h(
-      "el-dialog",
-      {
-        props: {
-          visible: this.showCreateModel,
-          title: "SQL 模型生成",
-        },
-        on: {
-          "update:visible": (event) => {
-            this.showCreateModel = event;
-          },
-        },
-      },
-      [
-        h("CreateModel", {
-          on: {
-            addModel: (event) => {
-              this.models.push(event);
-              this.showCreateModel = false;
-            },
-            closeForm: () => {
-              this.showCreateModel = false;
-            },
-          },
-        }),
-      ]
-    );
-
+    // Button to let user to create new model
     const onClickButton = h(
       "el-button",
       {
@@ -161,12 +136,44 @@ export default {
       ["创建新模板"]
     );
 
+    // dialog containing CreateModel.vue component which is basically a form
+    const createNewModel = h(
+      "el-dialog",
+      {
+        props: {
+          visible: this.showCreateModel,
+          title: "SQL 模型生成",
+        },
+        on: {
+          "update:visible": (event) => {
+            this.showCreateModel = event;
+          },
+        },
+      },
+      [
+        h("CreateModel", {
+          props: {
+            models: this.models,
+          },
+          on: {
+            addModel: (event) => {
+              this.models.push(event);
+              this.showCreateModel = false;
+            },
+            closeForm: () => {
+              this.showCreateModel = false;
+            },
+          },
+        }),
+      ]
+    );
+
     return (
       <el-container
         id="queryBuilder"
         style="postion:absolue;width:100%;height:100%"
       >
-        <el-header style="height:20%">{tabs}</el-header>
+        <el-header style="height:20%">{modelTabs}</el-header>
         <el-main>
           <el-card id="query">{query}</el-card>
         </el-main>
@@ -180,6 +187,7 @@ export default {
   },
 
   mounted() {
+    // for some reason tab is initialized to select the first one, so render 1st model
     this.onModelClick(this.models[0].value);
   },
 
