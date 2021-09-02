@@ -136,6 +136,35 @@ export default {
       ["创建新模板"]
     );
 
+    const printQueryButton = h(
+      "el-button",
+      {
+        attrs: {
+          style: "width: 100%;",
+        },
+        props: {
+          type: "info",
+        },
+        on: {
+          click: () => {
+            console.log(
+              "queryObj:",
+              this.queryObj,
+              "\nsetNestedAST",
+              this.setNestedAST,
+              "\nprintSQL:",
+              parser.sqlify(this.queryObj)
+            );
+            this.$message({
+              message: "已获取 Debug 信息，详情见 console log",
+              type: "info",
+            });
+          },
+        },
+      },
+      ["获取 Debug 信息"]
+    );
+
     // dialog containing CreateModel.vue component which is basically a form
     const createNewModel = h(
       "el-dialog",
@@ -177,8 +206,9 @@ export default {
         <el-main>
           <el-card id="query">{query}</el-card>
         </el-main>
-        <el-footer style="position:fixed; bottom: 0;left: 0;right: 0;">
-          {onClickButton}
+        <el-footer style="position:fixed; bottom: 0;left: 0;right: 0;height:15%">
+          <el-row style="margin-bottom: 5px;">{onClickButton}</el-row>
+          <el-row>{printQueryButton}</el-row>
         </el-footer>
         {createNewModel}
         <DataContainer ref="datacontainer" />
