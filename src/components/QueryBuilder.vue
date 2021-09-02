@@ -1,8 +1,8 @@
 <script>
 /* eslint-disable no-unused-vars */
-import KeywordButton from "./KeywordButton.vue";
 import Dropdown from "./Dropdown.vue";
 import DataContainer from "./DataContainer.vue";
+import CreateModel from "./CreateModel.vue";
 import { parseModelString, parser } from "../lib/util";
 import { generateQueryComponent } from "../lib/queryHandlers";
 import { constants } from "../config/constants";
@@ -10,9 +10,9 @@ import { constants } from "../config/constants";
 export default {
   name: "QueryBuilder",
   components: {
-    KeywordButton,
     Dropdown,
     DataContainer,
+    CreateModel,
   },
   data() {
     // short names to reduce model length
@@ -25,20 +25,22 @@ export default {
 
     return {
       models: [
-        `SELECT ${c}`,
-        `SELECT ${c} FROM ${c}`,
-        `SELECT ${c} FROM (SELECT ${c} FROM ${c})`,
-        `SELECT ${c} FROM ${c} WHERE (NOT ${c})`,
-        `SELECT ${c} FROM ${c} WHERE true`,
-        `SELECT ${c} FROM ${c} WHERE ${c} = ${s}`,
-        `SELECT ${c} FROM ${c} WHERE ${c} != ${b}`,
-        `SELECT ${c} FROM ${c} WHERE ${c} = ${s} AND ${c} != ${s} OR ${c} = (NOT ${c})`,
-        `SELECT ${c} FROM ${c} WHERE ${c} IN (${n})`,
-        `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c})`,
-        `SELECT ${c} FROM ${c} WHERE ${c} IN ((SELECT ${c} FROM ${c}), ${n})`,
-        `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (${n})))))`,
-        `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
-        `SELECT ${c} FROM ${c} JOIN ${c} ON ${c}`,
+        { name: "默认", value: `SELECT ${c} FROM ${c}` },
+        { name: "test1", value: `SELECT ${c}` },
+        // `SELECT ${c} FROM (SELECT ${c} FROM ${c})`,
+        // `SELECT ${c} FROM ${c} WHERE (NOT ${c})`,
+        // `SELECT ${c} FROM ${c} WHERE true`,
+        // `SELECT ${c} FROM ${c} WHERE ${c} = ${s}`,
+        // `SELECT ${c} FROM ${c} WHERE ${c} != ${b}`,
+        // `SELECT ${c} FROM ${c} WHERE ${c} = ${s} AND ${c} != ${s} OR ${c} = (NOT ${c})`,
+        // `SELECT ${c} FROM ${c} WHERE ${c} IN (${n})`,
+        // `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c})`,
+        // `SELECT ${c} FROM ${c} WHERE ${c} IN ((SELECT ${c} FROM ${c}), ${n})`,
+        {
+          name: "test2",
+          value: `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (${n})))))`,
+        }, // `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
+        // `SELECT ${c} FROM ${c} JOIN ${c} ON ${c}`,
       ],
       queryObj: null,
       queryComponent: null,
@@ -78,11 +80,18 @@ export default {
     },
   },
   render(h) {
-    const keywordButtons = this.models.map((model) => (
-      <el-tab-pane key={model} label="Label">
-        {model}
-      </el-tab-pane>
-    ));
+    const keywordButtons = this.models.map((model, id) => {
+      // cannot close Default (id === 0)
+      return id ? (
+        <el-tab-pane name={id.toString()} key={id} label={model.name} closable>
+          {model.value}
+        </el-tab-pane>
+      ) : (
+        <el-tab-pane name={id.toString()} key={id} label={model.name}>
+          {model.value}
+        </el-tab-pane>
+      );
+    });
 
     const query = this.error
       ? this.error.text
@@ -96,7 +105,10 @@ export default {
         props: { type: "border-card" },
         on: {
           "tab-click": (tab, event) => {
-            this.onModelClick(tab.$vnode.key);
+            this.onModelClick(tab.$el.innerText);
+          },
+          "tab-remove": (tabname) => {
+            this.$delete(this.models, Number(tabname));
           },
         },
       },
@@ -108,6 +120,7 @@ export default {
       {
         props: {
           visible: this.showCreateModel,
+          title: "SQL 模型生成",
         },
         on: {
           "update:visible": (event) => {
@@ -115,7 +128,19 @@ export default {
           },
         },
       },
-      [<div>在这里添加东西</div>]
+      [
+        h("CreateModel", {
+          on: {
+            addModel: (event) => {
+              this.models.push(event);
+              this.showCreateModel = false;
+            },
+            closeForm: () => {
+              this.showCreateModel = false;
+            },
+          },
+        }),
+      ]
     );
 
     const onClickButton = h(
@@ -153,6 +178,11 @@ export default {
       </el-container>
     );
   },
+
+  mounted() {
+    this.onModelClick(this.models[0].value);
+  },
+
   updated: function() {
     // if some input boxes stayed after rendered new model,
     // manually trigger v-on:change function to set stuff to the queryObj
