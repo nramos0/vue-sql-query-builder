@@ -131,7 +131,7 @@ export default {
         this.model += this.needJoinOn ? ` ON ${c}` : "";
       }
 
-      if (this.needUnion) {
+      if (this.needUnion && this.unionWith) {
         this.model += ` UNION `;
         this.model += this.unionWith;
       }
@@ -143,7 +143,10 @@ export default {
     },
     sendModel() {
       // Use this function to send model to parent
-      this.$emit("addModel", { name: this.label, value: this.model });
+      this.$emit("addModel", {
+        name: this.label ? this.label : "未命名",
+        value: this.model,
+      });
     },
     close() {
       // Use this function to close messagebox
