@@ -13,6 +13,7 @@ export default {
         student: ["name", "id", "major"],
         company: ["name", "ceo", "departments"],
         stuff: ["this", "is", "stuff", "from", "a", "huge", "database", "many"],
+        stuffarus: ["this", "is"],
       },
     };
   },

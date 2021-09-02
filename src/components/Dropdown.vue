@@ -10,7 +10,15 @@
       v-on:select="onChange"
     >
       <template slot-scope="props">
-        <div class="show">{{ props.item.show }}</div>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="props.item.show"
+          placement="right"
+          :disabled="!(props.item.show.length > 15)"
+        >
+          <div class="show">{{ props.item.show }}</div>
+        </el-tooltip>
       </template>
     </el-autocomplete>
   </div>
@@ -137,20 +145,12 @@ export default {
         const addAs = this.suggestion[equalsIndex] + " AS ";
         const addComma = this.suggestion[equalsIndex] + ", ";
 
-        if (this.filteredSuggest.length === 1) {
-          // if filter length === 1 then user has only 1 choice
-          // otherwise it may have been a false positive since user acually wanted sth with same prefix
-          return [
-            { value: addAs, show: addAs },
-            { value: addComma, show: addComma },
-          ];
-        } else {
-          return [
-            { value: addAs, show: addAs },
-            { value: addComma, show: addComma },
-            ...filteredSuggestObj,
-          ];
-        }
+        // show the elements that are not equal to it (has text as prefix)
+        return [
+          { value: addAs, show: addAs },
+          { value: addComma, show: addComma },
+          ...filteredSuggestObj.filter((el) => el.value !== text),
+        ];
       }
 
       return filteredSuggestObj;
