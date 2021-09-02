@@ -44,6 +44,7 @@ export default {
       queryComponent: null,
       setNestedAST: null,
       error: null,
+      showCreateModel: false,
     };
   },
   methods: {
@@ -78,13 +79,9 @@ export default {
   },
   render(h) {
     const keywordButtons = this.models.map((model) => (
-      <KeywordButton
-        key={model}
-        keyword={model}
-        click={() => {
-          this.onModelClick(model);
-        }}
-      />
+      <el-tab-pane key={model} label="Label">
+        {model}
+      </el-tab-pane>
     ));
 
     const query = this.error
@@ -93,52 +90,67 @@ export default {
       ? this.queryComponent(h)
       : "No Query. Please select a model from above.";
 
-    return (
-      <div id="queryBuilder">
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            marginBottom: "10px",
-          }}
-        >
-          <el-button
-            type="info"
-            on-click={() => {
-              console.log("queryObj", this.queryObj);
-              console.log("setNestedAST", this.setNestedAST);
-            }}
-            style={{
-              marginRight: "5px",
-            }}
-          >
-            Print Data
-          </el-button>
-          <el-button
-            type="info"
-            on-click={() => {
-              this.setNestedAST = null;
-            }}
-            style={{
-              marginRight: "5px",
-            }}
-          >
-            Clear Selected Input
-          </el-button>
-          <el-button
-            type="info"
-            on-click={() => {
-              console.log(parser.sqlify(this.queryObj));
-            }}
-          >
-            Print Query
-          </el-button>
-        </div>
+    const tabs = h(
+      "el-tabs",
+      {
+        props: { type: "border-card" },
+        on: {
+          "tab-click": (tab, event) => {
+            this.onModelClick(tab.$vnode.key);
+          },
+        },
+      },
+      keywordButtons
+    );
 
-        <div class="keyword-list">{keywordButtons}</div>
-        <pre id="query">{query}</pre>
+    const createNewModel = h(
+      "el-dialog",
+      {
+        props: {
+          visible: this.showCreateModel,
+        },
+        on: {
+          "update:visible": (event) => {
+            this.showCreateModel = event;
+          },
+        },
+      },
+      [<div>在这里添加东西</div>]
+    );
+
+    const onClickButton = h(
+      "el-button",
+      {
+        attrs: {
+          style: "width: 100%;",
+        },
+        props: {
+          type: "primary",
+        },
+        on: {
+          click: () => {
+            this.showCreateModel = true;
+          },
+        },
+      },
+      ["创建新模板"]
+    );
+
+    return (
+      <el-container
+        id="queryBuilder"
+        style="postion:absolue;width:100%;height:100%"
+      >
+        <el-header style="height:20%">{tabs}</el-header>
+        <el-main>
+          <el-card id="query">{query}</el-card>
+        </el-main>
+        <el-footer style="position:fixed; bottom: 0;left: 0;right: 0;">
+          {onClickButton}
+        </el-footer>
+        {createNewModel}
         <DataContainer ref="datacontainer" />
-      </div>
+      </el-container>
     );
   },
   updated: function() {
@@ -159,6 +171,11 @@ export default {
 #queryBuilder {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
 .keyword-list {
@@ -168,10 +185,11 @@ export default {
 
 #query {
   font-size: 20px;
+  line-height: 250%;
 }
 
 p {
-  margin: 15px 0;
+  margin: 0;
 }
 
 span,

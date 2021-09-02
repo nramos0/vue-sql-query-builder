@@ -61,7 +61,7 @@ const getOnFocus = (component, setNestedAST) => (e) => {
 
   // update the suggestions for FROM
   // get the container vue object
-  const datacontainer = e.$parent.$refs.datacontainer;
+  const datacontainer = e.$root.$children[0].$children[0].$refs.datacontainer;
 
   // update suggestions
   e.setSuggestions(datacontainer.getTables());
