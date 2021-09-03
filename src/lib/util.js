@@ -139,6 +139,9 @@ const getPlaceholdIfEmpty = (value) => {
   // if user input is empty return placeholder for col
   // Parse value into: [s1] AS [s2],[s3]
   const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
+  if (!value) {
+    return c_temp;
+  }
   const check_As_Comma = /(\sAS\s|,)/gi;
   var restultArr = value.split(check_As_Comma);
   // check if it is empty or all spaces
@@ -168,18 +171,18 @@ const getASTTable = (value) => {
   return parser.astify(`SELECT * FROM ${value}`).from;
 };
 
-const assignAST = (obj, ast, i = 0) => {
-  // Changed parameters, if type(obj)=type(ast)=Array then must pass in its index `i`
-  // if (Array.isArray(obj)) {
-  //   // Join has two items in array 'from', both gets deleted when changing FROM clause, which caused error
-  //   // TODO: Might find a better way to do this
-  //   obj = obj[i];
-  //   ast = ast[i];
-  // }
+const assignAST = (obj, ast) => {
   for (const prop in obj) {
     delete obj[prop];
   }
   Object.assign(obj, ast);
+};
+
+const assignASTFrom = (obj, ast) => {
+  // Fix the bug for assignAST in the most stupidest way
+  // *As far as i know this is only case where assignAST fails*
+  const onlyJoinLeft = obj.filter((el) => el.join);
+  Object.assign(obj, [...ast, ...onlyJoinLeft]);
 };
 
 // AST for join statement is slightly different
@@ -194,7 +197,7 @@ const parseJoin = (join, on) => {
 
 const setAST_Join = (joinObj, join) => {
   // join is text inside inputbox
-  const ast_join = parseJoin(join, null).from[1];
+  const ast_join = parseJoin(join, null).from.at(-1);
   // joinObj has items db, as, join (already set = inner/l/r join), on (no access), table
   // replace everything except on (dont have access to on, therefore its only a placeholder)
   joinObj.db = ast_join.db;
@@ -221,6 +224,7 @@ export {
   setAST_Join,
   setAST_On,
   assignAST,
+  assignASTFrom,
   getOnFocus,
   getOnBlur,
   getOnFocusAndOnBlur,

@@ -40,7 +40,10 @@ export default {
           name: "test2",
           value: `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (${n})))))`,
         }, // `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
-        // `SELECT ${c} FROM ${c} JOIN ${c} ON ${c}`,
+        {
+          name: "testingInnerJoin",
+          value: `SELECT ${c} FROM ${c} JOIN ${c} ON ${c}`,
+        },
       ],
       queryObj: null,
       queryComponent: null,

@@ -4,7 +4,7 @@ import {
   generateSpanChild,
   generateInputChild,
   getASTTable,
-  assignAST,
+  assignASTFrom,
   getOnFocusAndOnBlur,
 } from "../../util";
 
@@ -31,11 +31,11 @@ export const selectFrom = (from, component, children, nest) => {
     children.push(
       generateInputChild({
         onChange: (e) => {
-          assignAST(from, getASTTable(e.textInput));
+          assignASTFrom(from, getASTTable(e.textInput));
           console.log(`select from, nest ${nest}`);
         },
         ...getOnFocusAndOnBlur(component, (newQueryObj) => {
-          assignAST(from, [
+          assignASTFrom(from, [
             {
               as: null,
               expr: {

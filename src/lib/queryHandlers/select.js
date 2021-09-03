@@ -25,9 +25,9 @@ const handleFrom = (queryObj, component, children, nest) => {
   if (from) {
     selectFrom(from, component, children, nest);
     // Join Clause
-    if (from.length >= 2 && from[1][CLAUSE_TYPE.JOIN]) {
-      // If second item in `from` has join item
-      const joinObj = from[1];
+    const joinObj = from.at(-1);
+    if (joinObj.join) {
+      // assuming if it has join, then it must be the last few
       selectJoin(joinObj, component, children, nest);
     }
   }

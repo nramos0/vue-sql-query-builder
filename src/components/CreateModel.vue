@@ -21,7 +21,7 @@
               v-if="needFrom"
               placeholder="存储模板"
             >
-              <el-option :key="-1" label="手动输入" />
+              <el-option :key="-1" label="手动输入" :value="null" />
               <el-option
                 v-for="item in models"
                 :key="item.id"
