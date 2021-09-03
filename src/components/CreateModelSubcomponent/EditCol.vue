@@ -129,13 +129,13 @@ export default {
           }
         } else {
           if (this.colForm.moreColObject[i].aggregate == "none") {
-            colname = colname + "distinct " + this.colForm.moreColObject[i].col;
+            colname = colname + "DISTINCT " + this.colForm.moreColObject[i].col;
           } else {
             colname =
               colname +
               this.colForm.moreColObject[i].aggregate +
               "(" +
-              "distinct " +
+              "DISTINCT " +
               this.colForm.moreColObject[i].col +
               ")";
           }

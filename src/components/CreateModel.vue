@@ -7,7 +7,14 @@
       </el-form-item>
 
       <el-form-item label="SELECT 语句">
-        <el-switch v-model="needSelect" />
+        <el-col :span="6">
+          <el-switch v-model="needSelect" />
+        </el-col>
+        <el-col :span="12">
+          <el-checkbox v-model="needDistinct" v-if="needSelect"
+            >DISTINCT</el-checkbox
+          >
+        </el-col>
       </el-form-item>
 
       <el-form-item label="FROM 语句">
@@ -33,8 +40,14 @@
       </el-form-item>
 
       <el-form-item label="JOIN 语句">
-        <el-checkbox v-model="needJoin">JOIN</el-checkbox>
-        <el-checkbox v-model="needJoinOn" v-if="needJoin">ON</el-checkbox>
+        <el-row>
+          <el-col :span="6">
+            <el-checkbox v-model="needJoin">JOIN</el-checkbox>
+          </el-col>
+          <el-col :span="6">
+            <el-checkbox v-model="needJoinOn" v-if="needJoin">ON</el-checkbox>
+          </el-col>
+        </el-row>
       </el-form-item>
 
       <el-form-item label="UNION 语句">
@@ -73,7 +86,7 @@
       </el-form-item>
     </el-form>
     <div class="block" style="margin-top:10px">
-      <EditCol :editCol_show.sync="editCol_show" :column.sync="column" />
+      <EditCol :editCol_show.sync="editCol_show" :column.sync="columnPreset" />
     </div>
   </div>
 </template>
@@ -99,9 +112,11 @@ export default {
       /* 最后发送到 parent 的数据 */
       label: "",
       model: "",
+      preset: "",
 
       /* 添加需要的临时数据 */
       needSelect: false,
+      needDistinct: false,
       needFrom: false,
       fromTemplate: null,
       needJoin: false,
@@ -109,7 +124,7 @@ export default {
       needUnion: false,
       unionWith: null,
       editCol_show: false,
-      column: "",
+      columnPreset: "",
     };
   },
   methods: {
@@ -128,7 +143,11 @@ export default {
 
       //举例 w/ SELECT
       if (this.needSelect) {
-        this.model += `SELECT ${c} `;
+        if (this.needDistinct) {
+          this.model += `SELECT DISTINCT ${c} `;
+        } else {
+          this.model += `SELECT ${c} `;
+        }
       }
       if (this.needFrom) {
         this.model += ` FROM`;
@@ -152,7 +171,7 @@ export default {
         this.model += this.unionWith;
       }
 
-      console.log(this.model);
+      this.preset = this.columnPreset;
 
       // 完成后发送到 parent
       this.sendModel();
@@ -162,6 +181,7 @@ export default {
       this.$emit("addModel", {
         name: this.label ? this.label : "未命名",
         value: this.model,
+        preset: this.preset,
       });
     },
     close() {

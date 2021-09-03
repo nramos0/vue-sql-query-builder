@@ -77,7 +77,12 @@ export const selectQuery = (queryObj, component, children, nest) => {
   invariant(cols !== undefined, "Columns don't exist on queryObj");
   invariant(Array.isArray(cols), "Columns is not an array");
 
-  children.push(generateSpanChild("SELECT"));
+  // Put in one span so that vue doesnt rerender the first few buttons
+  if (queryObj.distinct) {
+    children.push(generateSpanChild("SELECT " + queryObj.distinct));
+  } else {
+    children.push(generateSpanChild("SELECT"));
+  }
   children.push(
     generateInputChild({
       onChange: (e) => {

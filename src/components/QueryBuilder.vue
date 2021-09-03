@@ -24,9 +24,16 @@ export default {
     } = constants.QUERY_MODEL.DISPLAY_PLACEHOLDER;
 
     return {
+      // name is he name of model specified by user, value is model
+      // preset is the placeholder value for the input in SELECT
       models: [
         { name: "默认", value: `SELECT ${c} FROM ${c}` },
-        { name: "test1", value: `SELECT ${c}` },
+        { name: "test1", value: `SELECT ${c}`, preset: "count(DISTINCT col)" },
+        {
+          name: "test1",
+          value: `SELECT DISTINCT ${c}`,
+          preset: "a",
+        },
         // `SELECT ${c} FROM (SELECT ${c} FROM ${c})`,
         // `SELECT ${c} FROM ${c} WHERE (NOT ${c})`,
         // `SELECT ${c} FROM ${c} WHERE true`,
@@ -39,7 +46,8 @@ export default {
         {
           name: "test2",
           value: `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (${n})))))`,
-        }, // `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
+        },
+        // `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
         {
           name: "testingInnerJoin",
           value: `SELECT ${c} FROM ${c} JOIN ${c} ON ${c}`,
@@ -110,7 +118,25 @@ export default {
         props: { type: "border-card" },
         on: {
           "tab-click": (tab, event) => {
+            const clickedModel = this.models[tab.$vnode.key];
             this.onModelClick(tab.$el.innerText);
+
+            // lil hacky
+            // if there is a preset, set the first select dropdownbox value to that preset
+            if (clickedModel.preset) {
+              var firstSelectDropdown;
+              for (const child of query.children) {
+                if (child.data.class === "queryInput") {
+                  firstSelectDropdown = child.componentInstance;
+                  break;
+                }
+              }
+              if (firstSelectDropdown) {
+                firstSelectDropdown.setText(clickedModel.preset);
+              } else {
+                console.warn("No dropdowns exist");
+              }
+            }
           },
           "tab-remove": (tabname) => {
             this.$delete(this.models, Number(tabname));

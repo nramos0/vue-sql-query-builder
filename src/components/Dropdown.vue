@@ -1,26 +1,32 @@
 <template>
   <div class="dropdown">
-    <el-autocomplete
-      class="input"
-      v-model="textInput"
-      :fetch-suggestions="querySearch"
-      v-on:focus="onFocus"
-      v-on:change="onChange"
-      v-on:blur="onBlur"
-      v-on:select="onChange"
+    <el-tooltip
+      :content="textInput"
+      placement="top-start"
+      :disabled="textInput.length < 12"
     >
-      <template slot-scope="props">
-        <el-tooltip
-          class="item"
-          effect="dark"
-          :content="props.item.show"
-          placement="right"
-          :disabled="!(props.item.show.length > 15)"
-        >
-          <div class="show">{{ props.item.show }}</div>
-        </el-tooltip>
-      </template>
-    </el-autocomplete>
+      <el-autocomplete
+        class="input"
+        v-model="textInput"
+        :fetch-suggestions="querySearch"
+        v-on:focus="onFocus"
+        v-on:change="onChange"
+        v-on:blur="onBlur"
+        v-on:select="onChange"
+      >
+        <template slot-scope="props">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="props.item.show"
+            placement="right"
+            :disabled="!(props.item.show.length > 15)"
+          >
+            <div class="show">{{ props.item.show }}</div>
+          </el-tooltip>
+        </template>
+      </el-autocomplete>
+    </el-tooltip>
   </div>
 </template>
 
@@ -76,6 +82,12 @@ export default {
       if (this.propOnBlur) {
         this.propOnBlur(this);
       }
+    },
+
+    setText(text) {
+      // manually set value
+      this.textInput = text;
+      this.onChange();
     },
 
     setSuggestions(newSuggestions) {
