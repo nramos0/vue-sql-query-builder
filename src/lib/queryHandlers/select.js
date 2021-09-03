@@ -25,10 +25,9 @@ const handleFrom = (queryObj, component, children, nest) => {
   if (from) {
     selectFrom(from, component, children, nest);
     // Join Clause
-    const joinObj = from.at(-1);
-    if (joinObj.join) {
-      // assuming if it has join, then it must be the last few
-      selectJoin(joinObj, component, children, nest);
+    if (from.at(-1).join) {
+      // assuming if it has join, then it must be the last one
+      selectJoin(queryObj, component, children, nest);
     }
   }
 };

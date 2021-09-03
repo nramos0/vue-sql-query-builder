@@ -142,8 +142,8 @@ const getPlaceholdIfEmpty = (value) => {
   if (!value) {
     return c_temp;
   }
-  const check_As_Comma = /(\sAS\s|,)/gi;
-  var restultArr = value.split(check_As_Comma);
+  const check_As_Comma_OP = /(\sAS\s|,|!=|=)/gi;
+  var restultArr = value.split(check_As_Comma_OP);
   // check if it is empty or all spaces
   const checkIfEmpty = /^\s*$/;
   restultArr = restultArr.map((el) => {

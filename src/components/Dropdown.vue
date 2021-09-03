@@ -37,6 +37,8 @@ export default {
       availableInputs: {
         select: "select",
         from: "from",
+        join: "join",
+        on: "on",
       },
     };
   },
@@ -80,6 +82,8 @@ export default {
       this.suggestion = newSuggestions;
     },
 
+    /* Some Useful Tools */
+
     filteredSuggest(text) {
       // filteredSuggest is data.suggestion filtered according to text (prefix must match)
       return this.suggestion.filter((el) => {
@@ -87,14 +91,35 @@ export default {
       });
     },
 
-    select_from_Compute_Suggestion(text) {
-      const filteredSuggest = this.filteredSuggest(text.trim());
+    filteredSuggestObj(text) {
+      return this.filteredSuggest(text).map((el) => {
+        return {
+          value: el,
+          show: el,
+        };
+      });
+    },
 
+    splitBy_As_Comma(text) {
+      // Turns text into array
+      // eg. 'left AS right, daikon' turns into ['left', ' AS ', 'right', ',', ' daikon']
       const check_As_Comma = /(\sAS\s|,)/gi;
-      const splitBy_As_Comma = text.split(check_As_Comma);
-      // separate out AS + , in text
-      const isEmpty = /^\s*$/;
+      return text.split(check_As_Comma);
+    },
+
+    checkIfEmpty(text) {
       // checks if is empty or equal to all white spaces
+      const isEmpty = /^\s*$/;
+      return isEmpty.test(text);
+    },
+
+    /* Compute Suggestions */
+
+    select_from_Compute_Suggestion(text) {
+      const filteredSuggestObj = this.filteredSuggestObj(text.trim());
+
+      const splitBy_As_Comma = this.splitBy_As_Comma(text);
+      // separate out AS + , in text
 
       if (splitBy_As_Comma.length > 2 && splitBy_As_Comma.at(-2) === ",") {
         // check if input is a new entry select/from (with comma)
@@ -120,7 +145,7 @@ export default {
       if (
         splitBy_As_Comma.length > 2 &&
         splitBy_As_Comma.at(-2).toLowerCase() === " as " &&
-        !isEmpty.test(splitBy_As_Comma.at(-1))
+        !this.checkIfEmpty(splitBy_As_Comma.at(-1))
       ) {
         // check if text is of the form "a AS b"
         // if so, append ", " to it, corresponds to when user finished typing alias
@@ -132,12 +157,6 @@ export default {
         ];
       }
 
-      const filteredSuggestObj = filteredSuggest.map((el) => {
-        return {
-          value: el,
-          show: el,
-        };
-      });
       const equalsIndex = this.suggestion.indexOf(text);
       if (equalsIndex >= 0) {
         // if user has input exactly equal to one of the suggestions
@@ -153,6 +172,79 @@ export default {
         ];
       }
 
+      return filteredSuggestObj;
+    },
+
+    join_ComputeSuggestion(text) {
+      const filteredSuggestObj = this.filteredSuggestObj(text.trim());
+
+      const splitBy_As_Comma = this.splitBy_As_Comma(text);
+
+      if (
+        splitBy_As_Comma.length > 2 &&
+        splitBy_As_Comma.at(-2).toLowerCase() === " as " &&
+        !this.checkIfEmpty(splitBy_As_Comma.at(-1))
+      ) {
+        // check if text is of the form "a AS b"
+        // if so, append ", " to it, corresponds to when user finished typing alias
+        return [
+          {
+            value: text,
+            show: splitBy_As_Comma.at(-1),
+          },
+        ];
+      }
+
+      const equalsIndex = this.suggestion.indexOf(text);
+      if (equalsIndex >= 0) {
+        // if user has input exactly equal to one of the suggestions
+        // then user is going to add , or AS to the statement
+        const addAs = this.suggestion[equalsIndex] + " AS ";
+
+        // show the elements that are not equal to it (has text as prefix)
+        return [
+          { value: addAs, show: addAs },
+          ...filteredSuggestObj.filter((el) => el.value !== text),
+        ];
+      }
+      return filteredSuggestObj;
+    },
+
+    on_ComputeSuggestion(text) {
+      const filteredSuggestObj = this.filteredSuggestObj(text.trim());
+
+      const check_OP = /(!=|=)/gi;
+      const splitByOP = text.split(check_OP);
+
+      if (splitByOP.length > 2 && check_OP.test(splitByOP.at(-2))) {
+        // check if input needs a new column after = or !=
+        const newFilter = this.filteredSuggestObj(splitByOP.at(-1).trim());
+
+        splitByOP.pop();
+        splitByOP.push(" ");
+        const newInput = splitByOP.join("");
+        return newFilter.map((el) => {
+          return {
+            value: newInput + el.value,
+            show: el.value,
+          };
+        });
+      }
+
+      const equalsIndex = this.suggestion.indexOf(text);
+      if (equalsIndex >= 0) {
+        // if user has input exactly equal to one of the suggestions
+        // then user is going to add , or AS to the statement
+        const appendEquals = this.suggestion[equalsIndex] + " = ";
+        const appendNEquals = this.suggestion[equalsIndex] + " != ";
+
+        // show the elements that are not equal to it (has text as prefix)
+        return [
+          { value: appendEquals, show: appendEquals },
+          { value: appendNEquals, show: appendNEquals },
+          ...filteredSuggestObj.filter((el) => el.value !== text),
+        ];
+      }
       return filteredSuggestObj;
     },
 
@@ -174,6 +266,10 @@ export default {
       const check = this.availableInputs;
       if (this.inputType === check.select || this.inputType === check.from) {
         return this.select_from_Compute_Suggestion(this.textInput);
+      } else if (this.inputType === check.join) {
+        return this.join_ComputeSuggestion(this.textInput);
+      } else if (this.inputType === check.on) {
+        return this.on_ComputeSuggestion(this.textInput);
       }
 
       // inputType is not set
