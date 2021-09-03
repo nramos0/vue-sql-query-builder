@@ -61,19 +61,33 @@
 
       <!-- 按钮 -->
       <el-form-item>
+        <el-button
+          round
+          icon="el-icon-edit"
+          type="warning"
+          @click="handleEdit()"
+          >编辑</el-button
+        >
         <el-button type="primary" @click="onSubmit">创建</el-button>
         <el-button @click="close">取消</el-button>
       </el-form-item>
     </el-form>
+    <div class="block" style="margin-top:10px">
+      <EditCol :editCol_show.sync="editCol_show" :column.sync="column" />
+    </div>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-unused-vars */
 import { constants } from "../config/constants";
+import EditCol from "./CreateModelSubcomponent/EditCol.vue";
 
 export default {
   name: "CreateModel",
+  components: {
+    EditCol,
+  },
   props: {
     models: {
       type: Array,
@@ -94,6 +108,8 @@ export default {
       needJoinOn: false,
       needUnion: false,
       unionWith: null,
+      editCol_show: false,
+      column: "",
     };
   },
   methods: {
@@ -151,6 +167,9 @@ export default {
     close() {
       // Use this function to close messagebox
       this.$emit("closeForm");
+    },
+    handleEdit() {
+      this.editCol_show = true;
     },
   },
 };
