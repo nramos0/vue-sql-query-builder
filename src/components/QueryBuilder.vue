@@ -185,9 +185,10 @@ export default {
               parser.sqlify(this.queryObj)
             );
             this.$message({
-              message: "已获取 Debug 信息，详情见 console log",
+              message: "已传送SQL语句",
               type: "info",
             });
+            this.$emit("newSQL", parser.sqlify(this.queryObj));
           },
         },
       },
@@ -201,6 +202,7 @@ export default {
         props: {
           visible: this.showCreateModel,
           title: "SQL 模型生成",
+          "append-to-body": true,
         },
         on: {
           "update:visible": (event) => {
@@ -235,7 +237,7 @@ export default {
         <el-main>
           <el-card id="query">{query}</el-card>
         </el-main>
-        <el-footer style="position:fixed; bottom: 0;left: 0;right: 0;height:15%">
+        <el-footer style="bottom: 0;left: 0;right: 0;height:15%">
           <el-row style="margin-bottom: 5px;">{onClickButton}</el-row>
           <el-row>{printQueryButton}</el-row>
         </el-footer>
@@ -268,9 +270,6 @@ export default {
 #queryBuilder {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-  position: absolute;
-  width: 100%;
-  height: 100%;
   top: 0;
   left: 0;
 }

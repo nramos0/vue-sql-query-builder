@@ -7,14 +7,16 @@
       </el-form-item>
 
       <el-form-item label="SELECT 语句">
-        <el-col :span="6">
-          <el-switch v-model="needSelect" />
-        </el-col>
-        <el-col :span="12">
-          <el-checkbox v-model="needDistinct" v-if="needSelect"
-            >DISTINCT</el-checkbox
-          >
-        </el-col>
+        <el-row>
+          <el-col :span="6">
+            <el-switch v-model="needSelect" />
+          </el-col>
+          <el-col :span="12">
+            <el-checkbox v-model="needDistinct" v-if="needSelect"
+              >DISTINCT</el-checkbox
+            >
+          </el-col>
+        </el-row>
       </el-form-item>
 
       <el-form-item label="FROM 语句">
@@ -50,6 +52,38 @@
         </el-row>
       </el-form-item>
 
+      <el-form-item label="WHERE 语句">
+        <el-row>
+          <el-col :span="6"
+            ><el-checkbox v-model="needWhere">WHERE</el-checkbox></el-col
+          >
+          <el-col :span="6">
+            <el-select
+              v-model="whereTemplate"
+              v-if="needWhere"
+              placeholder="存储模板"
+            >
+              <el-option key="bool" label="BOOL" value="bool" />
+              <el-option key="equal" label="=" value="=" />
+              <el-option key="nequal" label="!=" value="!=" />
+              <el-option key="less" label="<" value="<" />
+              <el-option key="leq" label="<=" value="<=" />
+              <el-option key="greater" label=">" value=">" />
+              <el-option key="geq" label=">=" value=">=" />
+            </el-select>
+          </el-col>
+        </el-row>
+      </el-form-item>
+
+      <el-form-item label="条件语句">
+        <el-col :span="6"
+          ><el-checkbox v-model="needGroupBy">GROUP BY</el-checkbox></el-col
+        >
+        <el-col :span="6"
+          ><el-checkbox v-model="needHaving">HAVING</el-checkbox></el-col
+        >
+      </el-form-item>
+
       <el-form-item label="UNION 语句">
         <el-row>
           <el-col :span="6"
@@ -68,6 +102,19 @@
                 :value="item.value"
               >
               </el-option> </el-select
+          ></el-col>
+        </el-row>
+      </el-form-item>
+
+      <el-form-item label="ORDER BY语句">
+        <el-row>
+          <el-col :span="6"
+            ><el-checkbox v-model="needOrderBy">ORDER BY</el-checkbox></el-col
+          >
+          <el-col :span="12">
+            <el-select v-model="orderByTemplate" v-if="needOrderBy">
+              <el-option key="ASC" label="ASC" value="ASC" />
+              <el-option key="DESC" label="DESC" value="DESC" /> </el-select
           ></el-col>
         </el-row>
       </el-form-item>
@@ -121,8 +168,14 @@ export default {
       fromTemplate: null,
       needJoin: false,
       needJoinOn: false,
+      needWhere: false,
+      whereTemplate: "bool",
+      needGroupBy: false,
+      needHaving: false,
       needUnion: false,
       unionWith: null,
+      needOrderBy: false,
+      orderByTemplate: "ASC",
       editCol_show: false,
       columnPreset: "",
     };
@@ -165,10 +218,28 @@ export default {
         this.model += ` JOIN ${c} `;
         this.model += this.needJoinOn ? ` ON ${c}` : "";
       }
-
+      if (this.needWhere) {
+        if (this.whereTemplate === "bool") {
+          this.model += ` WHERE ${b} `;
+        } else {
+          this.model += ` WHERE ${c} `;
+          this.model += this.whereTemplate;
+          this.model += ` ${s} `;
+        }
+      }
+      if (this.needGroupBy) {
+        this.model += ` GROUP BY ${c} `;
+      }
+      if (this.needHaving) {
+        this.model += ` HAVING ${b} `;
+      }
       if (this.needUnion && this.unionWith) {
         this.model += ` UNION `;
         this.model += this.unionWith;
+      }
+      if (this.needOrderBy) {
+        this.model += ` ORDER BY ${c} `;
+        this.model += this.orderByTemplate;
       }
 
       this.preset = this.columnPreset;
