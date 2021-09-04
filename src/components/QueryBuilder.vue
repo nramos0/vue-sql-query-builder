@@ -47,6 +47,10 @@ export default {
           name: "test2",
           value: `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (${n})))))`,
         },
+        {
+          name: "order",
+          value: `SELECT ${c} FROM ${c} ORDER BY ${c}`,
+        },
         // `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
         {
           name: "testingInnerJoin",

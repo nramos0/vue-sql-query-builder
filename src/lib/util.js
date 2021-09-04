@@ -213,6 +213,24 @@ const setAST_On = (onObj, on) => {
   assignAST(onObj, ast_on);
 };
 
+// AST for orderBy is also different
+
+const parseOrderBy = (order, isAsc) => {
+  const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
+  // if null set to parse placeholder
+  order = getPlaceholdIfEmpty(order);
+  const ascDesc = isAsc ? "ASC" : "DESC";
+  return parser.astify(
+    `SELECT ${c_temp} FROM ${c_temp} ORDER BY ${order} ` + ascDesc
+  );
+};
+
+const setAST_OrderBy = (orderObj, order) => {
+  const isAsc = orderObj[0].type === "ASC";
+  const resQuery = parseOrderBy(order, isAsc);
+  assignAST(orderObj, resQuery.orderby);
+};
+
 export {
   parseModelString,
   generateInputChild,
@@ -223,6 +241,7 @@ export {
   getASTTable,
   setAST_Join,
   setAST_On,
+  setAST_OrderBy,
   assignAST,
   assignASTFrom,
   getOnFocus,
