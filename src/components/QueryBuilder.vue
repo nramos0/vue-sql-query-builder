@@ -48,8 +48,8 @@ export default {
           value: `SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (SELECT ${c} FROM ${c} WHERE ${c} IN (${n})))))`,
         },
         {
-          name: "group",
-          value: `SELECT ${c} FROM ${c} GROUP BY ${c}`,
+          name: "order",
+          value: `SELECT ${c} FROM ${c} ORDER BY ${c}`,
         },
         // `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
         {
