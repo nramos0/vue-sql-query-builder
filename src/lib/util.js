@@ -234,17 +234,15 @@ const setAST_OrderBy = (orderObj, order) => {
 // AST for groupBy is similar to orderBy
 
 const parseGroupBy = (group) => {
-    const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
-    // if null set to parse placeholder
-    group = getPlaceholdIfEmpty(group);
-    return parser.astify(
-        `SELECT ${c_temp} FROM ${c_temp} GROUP BY ${group} `
-    );
+  const c_temp = constants.QUERY_MODEL.PARSE_PLACEHOLDER["COL_REF"];
+  // if null set to parse placeholder
+  group = getPlaceholdIfEmpty(group);
+  return parser.astify(`SELECT ${c_temp} FROM ${c_temp} GROUP BY ${group} `);
 };
 
 const setAST_GroupBy = (groupObj, group) => {
-    const resQuery = parseGroupBy(group);
-    assignAST(groupObj, resQuery.groupby);
+  const resQuery = parseGroupBy(group);
+  assignAST(groupObj, resQuery.groupby);
 };
 
 export {

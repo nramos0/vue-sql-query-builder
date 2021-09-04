@@ -51,6 +51,10 @@ export default {
           name: "group",
           value: `SELECT ${c} FROM ${c} GROUP BY ${c}`,
         },
+        {
+          name: "order",
+          value: `SELECT ${c} FROM ${c} ORDER BY ${c}`,
+        },
         // `SELECT ${c} FROM ${c} UNION SELECT ${c} FROM ${c}`,
         {
           name: "testingInnerJoin",
