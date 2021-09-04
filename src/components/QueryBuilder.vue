@@ -250,6 +250,7 @@ export default {
   mounted() {
     // for some reason tab is initialized to select the first one, so render 1st model
     this.onModelClick(this.models[0].value);
+    this.$store.commit("setContainer", this.$refs.datacontainer);
   },
 
   updated: function() {

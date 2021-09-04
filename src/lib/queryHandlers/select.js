@@ -91,8 +91,7 @@ export const selectQuery = (queryObj, component, children, nest) => {
       },
       onFocus: (e) => {
         // get the datacontainer vue object
-        const datacontainer =
-          e.$root.$children[0].$children[0].$refs.datacontainer;
+        const datacontainer = e.$store.getters.datacontainer;
 
         //get columns
         const columns = getAllColumns(queryObj, datacontainer);
